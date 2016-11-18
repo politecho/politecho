@@ -155,7 +155,7 @@ function score(post_ids) {
 	var score = 0;
 	var found = 0;
 	var fake = 0;
-	var num_posts = post_id.length; 
+	var num_posts = post_ids.length; 
 	for (i = 0; i < num_posts; i++) {
 		post_id = post_ids[i];
 		if (news_dict[post_id]) {
