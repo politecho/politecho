@@ -155,7 +155,8 @@ function score(post_ids) {
 	var score = 0;
 	var found = 0;
 	var fake = 0;
-	for (i = 0; i < post_ids.length; i++) {
+	var num_posts = post_id.length; 
+	for (i = 0; i < num_posts; i++) {
 		post_id = post_ids[i];
 		if (news_dict[post_id]) {
 			found++;
@@ -172,7 +173,7 @@ function score(post_ids) {
 	}
 	return {
 		politicalScore: score / found,
-		confidence: found / post_ids.length,
+		confidence: found / num_posts,
 		authenticity: 1 - fake / found
 	};
 }
