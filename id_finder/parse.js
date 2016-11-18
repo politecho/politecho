@@ -15,7 +15,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 }, ["blocking", "requestHeaders"]);
 
 var lastRequestTime = 0;
-var requestInterval = 20;
+var requestInterval = 50;
 
 function get(url, done) {
 	var xhr = new XMLHttpRequest();
