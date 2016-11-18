@@ -1,7 +1,6 @@
 chrome.runtime.onMessage.addListener(function (request, sender) {
 	if (request.action == "parseResponse") {
 		loadChart(request.data);
-    PageTransitions.nextPage();
 	} else if (request.action == "parseProgress") {
     $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
   }
@@ -26,10 +25,6 @@ $(document).ready(function() {
       });
       
       loadChart(userData);
-
-      setTimeout(function () {
-        PageTransitions.nextPage();
-      }, 1000);
     } else {
       chrome.runtime.sendMessage({ action: 'parse' });
     }

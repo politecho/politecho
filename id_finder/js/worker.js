@@ -26,7 +26,6 @@ onmessage = function (event) {
     .stop();
 
   for (var i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
-    console.log('tick');
     postMessage({
       type: "tick",
       progress: i / n

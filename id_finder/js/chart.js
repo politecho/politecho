@@ -153,14 +153,14 @@ function loadChart(userData) {
     worker.onmessage = function (e) {
         switch (e.data.type) {
             case 'tick':
-                console.log(e.data.progress);
+                $('.js-render-text').text('Rendering: ' + Math.floor(e.data.progress * 100) + '%');
                 break;
             case 'end':
                 for (var i = 0; i < userData.length; i++) {
-                    console.log(userData[i], e.data.userData[i]);
                     Object.assign(userData[i], e.data.userData[i]);
                 }
                 ticked();
+                PageTransitions.nextPage();
                 break;
         }
     }
