@@ -89,3 +89,11 @@ h5, p {
 	width: 45%;
 	max-width: 500px;
 }
+
+.area {
+	fill: rgba(123, 123, 255, 0.3);
+}
+
+.area2 {
+	fill: rgba(123, 255, 123, 0.5);
+}

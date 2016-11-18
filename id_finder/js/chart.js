@@ -26,11 +26,12 @@ function loadChart(userData) {
         .domain([0, 1])
         .range([height, height / 2]);
 
-    var line = d3.line()
+    var area = d3.area()
         .x(function (d) {
             return x(d[0]);
         })
-        .y(function (d) {
+        .y0(y2(0))
+        .y1(function (d) {
             return y2(d[1]);
         });
 
@@ -74,6 +75,18 @@ function loadChart(userData) {
                 newsFeedItems.push(e);
             }
         });
+        main.insert("path", ':first-child')
+            .datum(kdeDatum)
+            .attr("class", "area2")
+            .attr("d", area)
+            .attr('opacity', 0)
+            .datum(kde(newsFeedItems))
+            .transition()
+            .ease(d3.easeCubicOut)
+            .duration(1000)
+            .attr('opacity', 1)
+            .attr("d", area);
+
         $('.pt-page-3').off('click');
         $('.pt-page-3 h1').text('Political leanings of your news feed');
         $('.pt-page-3 p').text("And here's the political sentiment of just your news feed.");
@@ -148,8 +161,38 @@ function loadChart(userData) {
     var numHistBins = Math.ceil(Math.sqrt(userData.length));
     var bandwith = 1;
 
+    function kernelDensityEstimator(kernel, xs) {
+        return function (sample) {
+            return xs.map(function (x) {
+                return [x, d3.mean(sample, function (v) {
+                    return kernel(x - v.score);
+                })];
+            });
+        };
+    }
+
+    function epanechnikovKernel(bandwith) {
+        return function (u) {
+            if (Math.abs(u = u / bandwith) <= 1) {
+                return 0.75 * (1 - u * u) / bandwith;
+            } else return 0;
+        };
+    }
+
+    var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
+    var kdeDatum = kde(userData);
+
+    main.append("path")
+        .datum(kdeDatum)
+        .attr("class", "area")
+        .attr("d", area);
+
     var worker = new Worker('js/worker.js');
-    worker.postMessage({ userData: userData, width: width, height: height });
+    worker.postMessage({
+        userData: userData,
+        width: width,
+        height: height
+    });
     worker.onmessage = function (e) {
         switch (e.data.type) {
             case 'tick':
