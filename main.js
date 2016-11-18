@@ -1,5 +1,5 @@
 var userIds = [];
-for (var i = 0; i < 300; i++) {
+for (var i = 0; i < 500; i++) {
     userIds.push(Math.floor(Math.random() * 1000000));
 }
 
@@ -36,14 +36,14 @@ var y2 = d3.scaleLinear()
     .range([height, 0]);
 
 var simulation = d3.forceSimulation(userData)
-    .force("x", d3.forceX(function (d) {
+    .force("x", d3.forceX().x(function (d) {
         return x(d.score);
     }).strength(1))
     .force("y", d3.forceY(height))
     .force("collide", d3.forceCollide(4))
-    .stop();
+    .on('tick', ticked);
 
-for (var i = 0; i < 3000; ++i) simulation.tick();
+for (var i = 0; i < 300; ++i) simulation.tick();
 
 var chart = d3.select('body')
     .append('svg:svg')
@@ -59,21 +59,25 @@ var main = chart.append('g')
 
 var g = main.append("svg:g");
 
-var colorRamp = d3.scaleLinear().domain([-1,1]).range(["red","blue"]);
+var colorRamp = d3.scaleLinear().domain([-1, 1]).range(["red", "blue"]);
 
-g.selectAll("scatter-dots")
+var nodes = g.selectAll("scatter-dots")
     .data(userData)
     .enter().append("svg:circle")
-    .attr("cx", function (d, i) {
-        return d.x;
-    })
-    .attr("cy", function (d) {
-        return d.y;
-    })
     .attr("r", 3)
     .attr("fill", function (d, i) {
         return colorRamp(d.score);
     });
+
+function ticked() {
+    nodes
+        .attr("cx", function (d) {
+            return d.x;
+        })
+        .attr("cy", function (d) {
+            return d.y;
+        });
+}
 
 var numHistBins = Math.ceil(Math.sqrt(userData.length));
 var bandwith = 1;
