@@ -35,6 +35,14 @@ var y2 = d3.scaleLinear()
     .domain([0, 1])
     .range([height, 0]);
 
+var line = d3.line()
+    .x(function (d) {
+        return x(d[0]);
+    })
+    .y(function (d) {
+        return y2(d[1]);
+    });
+
 var simulation = d3.forceSimulation(userData)
     .alphaDecay(0.1)
     .force("x", d3.forceX().x(function (d) {
@@ -62,6 +70,20 @@ $('html').click(function () {
         }).iterations(10))
         .alpha(1)
         .restart();
+
+    var newsFeedItems = [];
+    userData.forEach(function (e) {
+        for (var i = 0; i < e.frequency; i++) {
+            newsFeedItems.push(e);
+        }
+    });
+    main.append("path")
+        .datum(kdeDatum)
+        .attr("class", "line")
+        .attr("d", line)
+        .datum(kde(newsFeedItems))
+        .transition()
+        .attr("d", line);
 })
 
 var chart = d3.select('body')
@@ -120,15 +142,9 @@ function epanechnikovKernel(bandwith) {
 }
 
 var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
+var kdeDatum = kde(userData);
 
 main.append("path")
-    .datum(kde(userData))
+    .datum(kdeDatum)
     .attr("class", "line")
-    .attr("d", d3.line()
-        .x(function (d) {
-            return x(d[0]);
-        })
-        .y(function (d) {
-            return y2(d[1]);
-        })
-    );
+    .attr("d", line);
