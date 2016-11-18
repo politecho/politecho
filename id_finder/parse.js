@@ -28,7 +28,7 @@ function getFriends(done) {
 }
 
 var lastRequestTime = 0;
-var requestInterval = 500;
+var requestInterval = 5000;
 
 function parsePage(url, done) {
 	var xhr = new XMLHttpRequest();
@@ -44,7 +44,7 @@ function parsePage(url, done) {
 			})[0];
 
 			if (!result) {
-				// console.log('empty result:', url);
+				console.log('empty result:', url);
 				done([]);
 			} else {
 				var $q = $(result.slice(5, -4));
@@ -163,6 +163,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 		// getFriends();
 		getAllFriendScores(function (results) {
 			console.log(results);
+			results.forEach(function (res) {
+				chrome.storage.sync.set(res, function() {
+		      // Notify that we saved.
+		      console.log(res);
+		    });
+			})
 		});
 		sendResponse('a');
 	}

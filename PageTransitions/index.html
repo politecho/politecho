@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>A Collection of Page Transitions</title>
+		<link rel="stylesheet" type="text/css" href="css/default.css" />
+		<link rel="stylesheet" type="text/css" href="css/multilevelmenu.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+		<link rel="stylesheet" type="text/css" href="css/animations.css" />
+
+		<link href="https://fonts.googleapis.com/css?family=Karla|Playfair+Display" rel="stylesheet">
+
+		<script src="js/modernizr.custom.js"></script>
+	</head>
+	<body>
+		<div id="pt-main" class="pt-perspective">
+			<div class="pt-page pt-page-1 gradient">
+				<h1>Is your news feed a bubble?</h1>
+				<h5>Find out how polarizing the content on your news feed is when compared to your friends as a whole.</h5>
+			</div>
+			<div class="pt-page pt-page-2">
+				<div class="gradient"></div>
+				<svg id="load-spinner"></svg>
+				<div class="col-right">
+					<h1>Analyzing your facebook data</h1>
+					<p>In the meanwhile, read about <a href="http://www.slate.com/articles/technology/cover_story/2016/01/how_facebook_s_news_feed_algorithm_works.html">the complicated problems</a> faced by the humans behind the algorithmic feed that curates content on Facebook.</p>
+				</div>
+			</div>
+			<div class="pt-page pt-page-3">
+				<h1>Political leanings of all your friends</h1>
+				<p>
+					Here's the political sentiment of your friend list based on our predictors.
+				</p>
+				<div class="gradient"></div>
+			</div>
+			<div class="pt-page pt-page-4">
+				<div class="col-left">
+					<h1>Your Friends</h1>
+				</div>
+				<div class="col-right">
+					<h1>Your Newsfeed</h1>
+				</div>
+			</div>
+			<div class="pt-page pt-page-5 gradient">
+				<h1>Share your results</h1>
+				<p>Compare your score with your friends</p>
+			</div>
+		</div>
+
+		<div class="pt-message">
+			<p>Your browser does not support CSS animations.</p>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="js/d3.min.js"></script>
+		<script src="js/pagetransitions.js"></script>
+		<script src="js/main.js"></script>
+		<script src="js/chart.js"></script>
+		<script src="js/pie.js"></script>
+	</body>
+</html>

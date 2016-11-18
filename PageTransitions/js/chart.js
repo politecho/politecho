@@ -48,15 +48,6 @@ var line = d3.line()
         return y2(d[1]);
     });
 
-var area = d3.area()
-    .x(function (d) {
-        return x(d[0]);
-    })
-    .y0(y2(0))
-    .y1(function (d) {
-        return y2(d[1]);
-    });
-
 var simulation = d3.forceSimulation(userData)
     .alphaDecay(0.08)
     .force("x", d3.forceX().x(function (d) {
@@ -104,29 +95,10 @@ $('.pt-page-3').click(function () {
             newsFeedItems.push(e);
         }
     });
-    main.insert("path", ':first-child')
-        .datum(kdeDatum)
-        .attr("class", "line2")
-        .attr("d", line)
-        .attr('opacity', 0)
-        .datum(kde(newsFeedItems))
-        .transition()
-        .ease(d3.easeCubicOut)
-        .duration(1000)
-        .attr('opacity', 1)
-        .attr("d", line);
-    main.insert("path", ':first-child')
-        .datum(kdeDatum)
-        .attr("class", "area2")
-        .attr("d", area)
-        .attr('opacity', 0)
-        .datum(kde(newsFeedItems))
-        .transition()
-        .ease(d3.easeCubicOut)
-        .duration(1000)
-        .attr('opacity', 1)
-        .attr("d", area);
-    $('html').off('click');
+    $('.pt-page-3').off('click');
+    $('.pt-page-3 h1').text('Political leanings of your news feed');
+    $('.pt-page-3 p').text("And here's the political sentiment of just your news feed.");
+    return false;
 })
 
 var chart = d3.select('.pt-page-3')
@@ -196,37 +168,6 @@ function ticked() {
 
 var numHistBins = Math.ceil(Math.sqrt(userData.length));
 var bandwith = 1;
-
-function kernelDensityEstimator(kernel, xs) {
-    return function (sample) {
-        return xs.map(function (x) {
-            return [x, d3.mean(sample, function (v) {
-                return kernel(x - v.score);
-            })];
-        });
-    };
-}
-
-function epanechnikovKernel(bandwith) {
-    return function (u) {
-        if (Math.abs(u = u / bandwith) <= 1) {
-            return 0.75 * (1 - u * u) / bandwith;
-        } else return 0;
-    };
-}
-
-var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
-var kdeDatum = kde(userData);
-
-main.append("path")
-    .datum(kdeDatum)
-    .attr("class", "line")
-    .attr("d", line);
-
-main.append("path")
-    .datum(kdeDatum)
-    .attr("class", "area")
-    .attr("d", area);
 
 setTimeout(function () {
     for (var i = 0; i < 100; ++i) {

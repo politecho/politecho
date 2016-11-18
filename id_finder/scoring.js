@@ -65,7 +65,7 @@ var ucf = 1;
 
 //Fake news classifyng sources 
 var fakenews_dict = {};
-
+/*
 //Fake news pages 
 fakenews_dict["146422995398181"] = ulf; //Addicting Info 
 fakenews_dict["177486166274"] = ulf; //Being Liberal 
@@ -108,7 +108,7 @@ fakenews_dict["95475020353"] = ucf; //Breitbart
 fakenews_dict["140738092630206"] = ucf; //The Blaze 
 fakenews_dict["319569361390023"] = ucf; //Twitchy 
 fakenews_dict["245481491808"] = ucf; //Now The End Begins 
-
+*/
 //Politicians   
 var ulp = -1;
 var lp = -.5;
@@ -117,7 +117,7 @@ var ucp = 1;
 
 //Fake news classifyng sources 
 var pol_dict = {};
-
+/*
 //Politician Pages 
 pol_dict["6815841748"] = ulp; //Barack Obama
 pol_dict["22092775577"] = ulp; //Michelle Obama
@@ -150,7 +150,7 @@ pol_dict["261624820205"] = ucp; //Carly Fiorina
 pol_dict["44746457369"] = ucp; //Rick Santorum
 pol_dict["54172246106"] = ucp; //Rand Paul 
 pol_dict["6934857868"] = ucp; //Mike Huckabee 
-
+*/
 function score(post_ids) {
 	var score = 0;
 	var found = 0;
