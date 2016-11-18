@@ -182,7 +182,7 @@ function parsePage(url, done) {
 			})[0];
 
 			if (!result) {
-				// console.log('empty result:', url);
+				console.log('empty result:', url);
 				done([]);
 			} else {
 				var $q = $(result.slice(5, -4));
