@@ -38,10 +38,9 @@ function parsePage(url) {
 	xhr.send();
 }
 
-parsePage('https://m.facebook.com/search/5281959998/stories-by/1662722772/stories-liked/intersect?__mref=message_bubble');
-parsePage('https://m.facebook.com');
-/*
-chrome.runtime.sendMessage({
-action: "parse",
-source: parseDOM(document)
-});*/
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+	console.log("Incoming message", request, sender);
+	if (request.action == "parse") {
+		parsePage('https://m.facebook.com/search/5281959998/stories-by/1662722772/stories-liked/intersect?__mref=message_bubble');
+	}
+});
