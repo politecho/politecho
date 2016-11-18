@@ -33,13 +33,13 @@ function onWindowLoad() {
 	console.log("Window load");
 	message = document.querySelector('#message');
 
-	chrome.runtime.sendMessage({
-		action: 'parse',
-		userId: '1662722772',
-		newsSourceIds: Object.keys(news_dict),
-	});
-	message.innerText = "URL: " + chrome.extension.getURL("index.html");
-	chrome.tabs.create({url: 'index.html'});
+	// chrome.runtime.sendMessage({
+	// 	action: 'parse',
+	// 	userId: '1662722772',
+	// 	newsSourceIds: Object.keys(news_dict),
+	// });
+	// message.innerText = "URL: " + chrome.extension.getURL("index.html");
+	// chrome.tabs.create({url: 'index.html'});
 }
 
 window.onload = onWindowLoad;

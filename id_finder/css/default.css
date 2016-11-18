@@ -29,10 +29,14 @@ body {
 
 .pt-page-3 .gradient {
 	position: absolute;
-	bottom: 50px;
+	top: 582px;
 	left: 0;
 	height: 50px;
 	width: 100%;
+}
+
+.pt-page-3 svg {
+	margin-left: -57px;
 }
 
 .pt-page-4 svg {
