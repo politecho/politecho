@@ -27,6 +27,9 @@ function getFriends(done) {
 	xhr.send();
 }
 
+var lastRequestTime = 0;
+var requestInterval = 500;
+
 function parsePage(url, done) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
@@ -88,7 +91,11 @@ function parsePage(url, done) {
 			// }
 		}
 	}
-	xhr.send();
+	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0);
+	lastRequestTime = delay + (+new Date());
+	setTimeout(function () {
+		xhr.send();
+	}, delay);
 }
 
 function buildQueryUrl(userId, newsSourceIds) {
