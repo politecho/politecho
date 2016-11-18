@@ -116,10 +116,14 @@ function getAllFriendScores2(done, progress) {
 		numReturnsRemaining--;
 		if (numReturnsRemaining == 0) {
 			var results = Object.keys(profileToPages).map(function (profile) {
+				var scores = score(profileToPages[profile]);
 				return {
 					userId: profile,
 					frequency: profileToFrequency[profile] || 0,
-					score: score(profileToPages[profile]).politicalScore,
+					score: scores.politicalScore,
+					//frequency: scores.frequency, 
+					//authenticity: scores.authenticity 
+
 				}
 			});
 			// console.log(Object.keys(profileToFrequency).filter(function (profile) { return !profileToPages.hasOwnProperty(profile); }).join(","));

@@ -1,7 +1,7 @@
-var ul = -1;
-var l = -.5;
-var c = .5;
-var uc = 1;
+var ul = -.9;
+var l = -.25;
+var c = .25;
+var uc = .9;
 
 //Reputable classifyng sources 
 var news_dict = {};
@@ -59,8 +59,8 @@ news_dict["35994014410"] = uc; //The Washington Times
 
 //Fake news  
 var ulf = -1;
-var lf = -.5;
-var cf = .5;
+var lf = -.6;
+var cf = .6;
 var ucf = 1;
 
 //Fake news classifyng sources 
@@ -110,10 +110,10 @@ fakenews_dict["319569361390023"] = ucf; //Twitchy
 fakenews_dict["245481491808"] = ucf; //Now The End Begins 
 
 //Politicians   
-var ulp = -1;
-var lp = -.5;
-var cp = .5;
-var ucp = 1;
+var ulp = -.75;
+var lp = -.25;
+var cp = .25;
+var ucp = .75;
 
 //Fake news classifyng sources 
 var pol_dict = {};
@@ -173,6 +173,6 @@ function score(post_ids) {
 	return {
 		politicalScore: score / found,
 		confidence: found / post_ids.length,
-		authenticity: fake / found
+		authenticity: 1 - fake / found
 	};
 }
