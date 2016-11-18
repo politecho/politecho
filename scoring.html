@@ -1,0 +1,74 @@
+<script type="text/javascript">
+	var ul = 0;  
+	var l = .25; 
+	var c = .75; 
+	var uc = 1; 
+
+	//Reputable classifyng sources 
+	var news_dict = {}; 
+
+	//News pages 
+	news_dict["9258148868"] = ul; //New Yorker
+	news_dict["21516776437"] = ul; //Slate 
+	news_dict["7976226799"] = ul; //Daily Show 
+	news_dict["10513336322"] = ul; //The Guardian 
+	news_dict["132427453584273"] = ul; //Al Jazeera America 
+	news_dict["10643211755"] = ul; //NPR 
+	news_dict["5281959998"] = ul; //New York Times 
+	news_dict["19013582168"] = ul; //PBS 
+	news_dict["18468761129"] = ul; //HuffPost 
+	news_dict["56845382910"] = ul; //HuffPost Politics 
+	news_dict["6250307292"] = ul; //Washington Post 
+	news_dict["374111579728"] = ul; //Wasington Post Politics 
+	news_dict["6013004059"] = ul; //The Economist
+	news_dict["62317591679"] = ul; //Politico 
+	news_dict["273864989376427"] = ul; //MSNBC 
+	news_dict["5550296508"] = ul; //CNN 
+	news_dict["219367258105115"] = ul; //CNN Politics 
+	news_dict["155869377766434"] = ul; //NBC News 
+	news_dict["197311240419563"] = ul; // Late Night with Seth Meyers 
+	news_dict["545775132233909"] = ul; //Late Show with Stephen Colbert 
+	news_dict["1765033567057615"] = ul; //Full Frontal with Samantha Bee 
+	news_dict["479042895558058"] = ul; //Last Week Tonight with John Oliver 
+
+	news_dict["131459315949"] = l; //CBS News
+	news_dict["266790296879"] = l; //Bloomberg 
+	news_dict["1481073582140028"] = l; //Bloomberg Politics 
+	news_dict["86680728811"] = l; //ABC News
+	news_dict["13652355666"] = l; //USA Today 
+	news_dict["21898300328"] = l; //Buzzfeed
+	news_dict["354263831266028"] = l; //Buzzfeed Politics 
+
+	news_dict["338028696036"] = c; //Yahoo News
+	news_dict["8304333127"] = c; //Wall Street Journal 
+
+	news_dict["15704546335"] = uc; //Fox News
+	news_dict["102533606954"] = uc; //Drudge Report
+	news_dict["95475020353"] = uc; //Breitbart 
+	news_dict["80256732576"] = uc; //Info Wars
+	news_dict["136264019722601"] = uc; //Rush Limbaugh Show
+	news_dict["140738092630206"] = uc; //The Blaze
+	news_dict["69813760388"] = uc; //Sean Hannity Show
+	news_dict["36400348187"] = uc; //Glenn Beck Program 
+	news_dict["85452072376"] = uc; //NewsMax
+	news_dict["182919686769"] = uc; //DailyCaller
+	news_dict["912274352202712"] = uc; //DailyCaller Politics
+	news_dict["35994014410"] = uc; //The Washington Times 
+
+	//Fake news pages 
+
+	function score(post_ids) {
+		var score = 0; 
+		var found = 0;
+		for (i = 0; i < post_ids.length; i++) {
+			post_id = post_ids[i]; 
+			if (news_dict[post_id]) {
+				found++; 
+				score += news_dict[post_id]; 
+			}
+		}
+		return [score/found, found/post_ids.length]; 
+	}
+
+	console.log(score(["338028696036", "15704546335", "136264019722601", "12121321321321", "654654646", "85452072376", "4905482343", "23219382343"]))
+</script>
