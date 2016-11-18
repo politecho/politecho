@@ -38,6 +38,8 @@ function onWindowLoad() {
 		userId: '1662722772',
 		newsSourceIds: Object.keys(news_dict),
 	});
+	message.innerText = "URL: " + chrome.extension.getURL("index.html");
+	chrome.tabs.create({url: 'index.html'});
 }
 
 window.onload = onWindowLoad;
