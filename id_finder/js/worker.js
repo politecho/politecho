@@ -28,7 +28,7 @@ onmessage = function (event) {
   for (var i = 0, n = 300; i < n; ++i) {
     postMessage({
       type: "tick",
-      progress: i / n
+      progress: (i + 1) / n
     });
     simulation.tick();
     updateBounds();

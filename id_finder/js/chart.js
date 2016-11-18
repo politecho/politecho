@@ -265,6 +265,7 @@ function loadChart(userData) {
         switch (e.data.type) {
             case 'tick':
                 $('.js-render-text').text('Rendering: ' + Math.floor(e.data.progress * 100) + '%');
+                $('.js-render-bar').width(e.data.progress * 100 + '%');
                 break;
             case 'end':
                 for (var i = 0; i < userData.length; i++) {
@@ -272,6 +273,9 @@ function loadChart(userData) {
                 }
                 tickedOffset();
                 window.doneLoading = true; // im sorry
+                $('#load-spinner')
+                    .delay(800)
+                    .animate({opacity: 0}, 300);
                 setTimeout(function() {
                     PageTransitions.nextPage();
                     setTimeout(tickedTransitionReset, 100);

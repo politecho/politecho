@@ -175,3 +175,9 @@ a::after {
  a:hover::after {
   height: 3px;
  }
+
+ .progress-bar {
+	 background-color: black;
+	 width: 0;
+	 height: 1px;
+ }

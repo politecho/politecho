@@ -4,6 +4,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 		loadChart(request.data);
 	} else if (request.action == "parseProgress") {
     $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
+    $('.js-progress-bar').width(request.data.elapsed / request.data.total * 100 + '%');
   }
 });
 
