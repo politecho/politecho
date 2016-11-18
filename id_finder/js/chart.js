@@ -35,7 +35,7 @@ function loadChart(userData) {
             return y2(d[1]);
         });
 
-    $('.pt-page-3').click(function () {
+    $('.pt-page-3 .button').click(function () {
         userData.forEach(function (d) {
             d.r = Math.sqrt(d.frequency) * 3 + 2;
         });
@@ -87,9 +87,9 @@ function loadChart(userData) {
             .attr('opacity', 1)
             .attr("d", area);
 
-        $('.pt-page-3').off('click');
+        $(this).off('click');
         $('.pt-page-3 h1').text('Political leanings of your news feed');
-        $('.pt-page-3 p').text("And here's the political sentiment of just your news feed.");
+        $('.pt-page-3 p').first().text("And here's the political sentiment of just your news feed.");
         return false;
     })
 
