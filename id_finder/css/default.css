@@ -30,10 +30,9 @@ body {
 .pt-page-3 .gradient {
 	position: absolute;
 	top: 0;
-	left: 0;
-	height: 6px;
-	width: 100%;
-	transform: translate(225px, 90px) rotate(90deg);
+	left: 995px;
+	height: 100%;
+	width: 6px;
 }
 
 .pt-page-3 svg {
@@ -101,7 +100,7 @@ h5, p {
 }
 
 .area2 {
-	fill: rgba(114, 255, 249, 0.3)
+	fill: rgba(114, 255, 249, 0.1)
 }
 
 .button {

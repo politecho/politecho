@@ -35,7 +35,7 @@ function loadChart(userData) {
             return y2(d[1]);
         });
 
-    $('.pt-page-3 .button').click(function () {
+    $('.pt-page-3 .button.next').click(function () {
         userData.forEach(function (d) {
             d.r = Math.sqrt(d.frequency) * 3 + 2;
         });
@@ -90,8 +90,13 @@ function loadChart(userData) {
         $(this).off('click');
         $('.pt-page-3 h1').text('Political leanings of your news feed');
         $('.pt-page-3 p').first().text("And here's the political sentiment of just your news feed.");
+        $('.pt-page-3 .button.back').show();
         return false;
-    })
+    });
+    $('.pt-page-3 .button.back').hide();
+    $('.pt-page-3 .button.back').click(function() {
+        console.log("bruh")
+    });
 
     var chart = d3.select('.pt-page-3')
         .append('svg:svg')
@@ -126,7 +131,19 @@ function loadChart(userData) {
         })
         .attr('opacity', function (d) {
             return d.confidence;
-        });
+        })
+        .on("mouseover", function(d){
+            tooltip.text(d.userId);
+            return tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+        .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden");
 
     function updateBounds() {
         userData.forEach(function (d) {
