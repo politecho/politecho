@@ -173,6 +173,6 @@ function score(post_ids) {
 	return {
 		politicalScore: score / found,
 		confidence: found / post_ids.length,
-		authenticity: fake / found
+		authenticity: 1 - fake / found
 	};
 }
