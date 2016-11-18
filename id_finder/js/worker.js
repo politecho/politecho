@@ -12,12 +12,16 @@ onmessage = function (event) {
     });
   }
 
+  var x = d3.scaleLinear()
+    .domain([-1, 1])
+    .range([0, event.data.width]);
+
   var simulation = d3.forceSimulation(userData)
     .alphaDecay(0.08)
     .force("x", d3.forceX().x(function (d) {
-      return d.score;
+      return x(d.score);
     }).strength(1))
-    .force("y", d3.forceY(0).strength(1))
+    .force("y", d3.forceY(event.data.height).strength(1))
     .force("collide", d3.forceCollide(4).iterations(10))
     .stop();
 

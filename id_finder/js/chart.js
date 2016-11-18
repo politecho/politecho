@@ -58,10 +58,10 @@ function loadChart(userData) {
         var simulation = d3.forceSimulation(userData)
             .alphaDecay(0.08)
             .force("x", d3.forceX().x(function (d) {
-                return d.score;
+                return x(d.score);
             }).strength(1))
             .force("y", d3.forceY().y(function (d) {
-                return d.frequency;
+                return y(d.frequency);
             }))
             .force("collide", d3.forceCollide(function (d) {
                 return d.r + 1;
@@ -124,24 +124,24 @@ function loadChart(userData) {
 
         nodes
             .attr("cx", function (d) {
-                return x(d.x);
+                return d.x;
             })
             .attr("cy", function (d) {
-                return y(d.y);
+                return d.y;
             });
 
         lines
             .attr('x1', function (d) {
-                return x(d.x);
+                return d.x;
             })
             .attr('y1', function (d) {
                 return y(0);
             })
             .attr('x2', function (d) {
-                return x(d.x);
+                return d.x;
             })
             .attr('y2', function (d) {
-                return y(d.y);
+                return d.y;
             });
     }
 
