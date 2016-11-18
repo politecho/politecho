@@ -25,7 +25,7 @@ onmessage = function (event) {
     .force("collide", d3.forceCollide(4).iterations(10))
     .stop();
 
-  for (var i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
+  for (var i = 0, n = 300; i < n; ++i) {
     postMessage({
       type: "tick",
       progress: i / n
