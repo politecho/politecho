@@ -1,10 +1,21 @@
 chrome.runtime.onMessage.addListener(function (request, sender) {
 	if (request.action == "parseResponse") {
+    storeResponse(request.data);
 		loadChart(request.data);
 	} else if (request.action == "parseProgress") {
     $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
   }
 });
+
+function storeResponse(data) {
+  chrome.storage.local.set({"data": JSON.stringify(data)});
+}
+
+function getStoredResponse(done) {
+  chrome.storage.local.get("data", function(items) {
+    return done(JSON.parse(items["data"]));
+  });
+}
 
 $(document).ready(function() {
   $('.pt-page-1 .button').click(function () {
@@ -29,7 +40,17 @@ $(document).ready(function() {
         loadChart(userData);
       }, 700);
     } else {
-      chrome.runtime.sendMessage({ action: 'parse' });
+      // chrome.storage.local.clear();
+      getStoredResponse(function(userData) {
+        if (userData) {
+          setTimeout(function () {
+            loadChart(userData);
+          }, 700);
+        }
+        else {
+          chrome.runtime.sendMessage({ action: 'parse' });
+        }
+      })
     }
   });
 
