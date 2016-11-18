@@ -14,7 +14,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 	tabId: -1,
 }, ["blocking", "requestHeaders"]);
 
-function getNewsFeedFrequency(done) {
+function getNewsFeedFrequency(maxDepth, done, onFetch) {
 	var frequency = {};
 
 	function fetch(url, depth, fetchDone) {
@@ -25,8 +25,10 @@ function getNewsFeedFrequency(done) {
 			if (xhr.readyState == 4) {
 				var text = xhr.responseText;
 				var $t = $(text);
-				
-				var links = $t.find('[role="article"] a').map(function () { return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1]; }).get();
+
+				var links = $t.find('[role="article"] a').map(function () {
+					return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1];
+				}).get();
 				links.forEach(function (link) {
 					if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
 					frequency[link]++;
@@ -34,6 +36,7 @@ function getNewsFeedFrequency(done) {
 
 				var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
 				if (next && depth) {
+					onFetch && onFetch();
 					fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
 				} else {
 					fetchDone();
@@ -43,7 +46,7 @@ function getNewsFeedFrequency(done) {
 		xhr.send();
 	}
 
-	fetch('https://m.facebook.com/stories.php', 10, function () {
+	fetch('https://m.facebook.com/stories.php', maxDepth, function () {
 		done(frequency);
 	});
 }
@@ -63,7 +66,9 @@ function getPageLikes(pageId, done) {
 			xhr2.onreadystatechange = function (e) {
 				if (xhr2.readyState == 4) {
 					var $t = $(xhr2.responseText);
-					var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function() { return $(this).attr('href') }).get();
+					var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
+						return $(this).attr('href')
+					}).get();
 					done(profileUrls);
 				}
 			}
@@ -73,25 +78,39 @@ function getPageLikes(pageId, done) {
 	xhr.send();
 }
 
-function getAllFriendScores2(done) {
+function getAllFriendScores2(done, progress) {
+	var maxNewsFeedDepth = 10;
+
 	var pageIds = getAllPageIds();
 	var profileToPages = {};
 	var profileToFrequency;
 	pageIds.forEach(function (pageId) {
-		getPageLikes(pageId, function (profiles) {
-			profiles.forEach(function (profile) {
-				if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
-				profileToPages[profile].push(pageId);
+		setTimeout(function () {
+			getPageLikes(pageId, function (profiles) {
+				profiles.forEach(function (profile) {
+					if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
+					profileToPages[profile].push(pageId);
+				});
+				onProgress();
+				onReturn();
 			});
-			onReturn();
-		});
+		}, Math.random() * 1000);
 	});
-	getNewsFeedFrequency(function (data) {
+	getNewsFeedFrequency(maxNewsFeedDepth, function (data, progress) {
 		profileToFrequency = data;
 		onReturn();
-	})
+	}, onProgress);
+
+	var totalProgress = maxNewsFeedDepth + pageIds.length;
+	var elapsedProgress = 0;
+
+	function onProgress() {
+		elapsedProgress++;
+		progress && progress(elapsedProgress, totalProgress);
+	}
 
 	var numReturnsRemaining = 1 + pageIds.length;
+
 	function onReturn() {
 		numReturnsRemaining--;
 		if (numReturnsRemaining == 0) {
@@ -131,7 +150,9 @@ function getLikes(userId, done) {
 			if (xhr.readyState == 4) {
 				var text = xhr.responseText;
 				var $t = $(text);
-				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {return $(this).text()}).get();
+				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {
+					return $(this).text()
+				}).get();
 				if (likes.length > 0) {
 					fetch(index + likes.length, function (moreLikes) {
 						fetchDone(likes.concat(moreLikes));
@@ -143,7 +164,7 @@ function getLikes(userId, done) {
 		}
 		xhr.send();
 	}
-	
+
 	fetch(0, done);
 }
 
@@ -313,6 +334,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			chrome.runtime.sendMessage({
 				action: "parseResponse",
 				data: data,
+			});
+		}, function (elapsed, total) {
+			console.log('Progress: ' + elapsed + '/' + total);
+			chrome.runtime.sendMessage({
+				action: "parseProgress",
+				data: {
+					elapsed: elapsed,
+					total: total,
+				},
 			});
 		});
 		sendResponse('a');
