@@ -14,36 +14,49 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 	tabId: -1,
 }, ["blocking", "requestHeaders"]);
 
+var lastRequestTime = 0;
+var requestInterval = 20;
+
+function get(url, done) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+	xhr.onreadystatechange = function (e) {
+		if (xhr.readyState == 4) {
+			done(xhr.responseText);
+		}
+	}
+	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * requestInterval;
+	lastRequestTime = delay + (+new Date());
+	setTimeout(function () {
+		xhr.send();
+	}, delay);
+}
+
 function getNewsFeedFrequency(maxDepth, done, onFetch) {
 	var frequency = {};
 
 	function fetch(url, depth, fetchDone) {
 		console.log('getNewsFeedFrequency.fetch', depth);
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', url, true);
-		xhr.onreadystatechange = function (e) {
-			if (xhr.readyState == 4) {
-				var text = xhr.responseText;
-				var $t = $(text);
+		get(url, function (text) {
+			var $t = $(text);
 
-				var links = $t.find('[role="article"] a').map(function () {
-					return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1];
-				}).get();
-				links.forEach(function (link) {
-					if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
-					frequency[link]++;
-				});
+			var links = $t.find('[role="article"] a').map(function () {
+				return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1];
+			}).get();
+			links.forEach(function (link) {
+				if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
+				frequency[link]++;
+			});
 
-				var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
-				if (next && depth) {
-					onFetch && onFetch();
-					fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
-				} else {
-					fetchDone();
-				}
+			onFetch();
+
+			var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
+			if (next && depth) {
+				fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
+			} else {
+				fetchDone();
 			}
-		}
-		xhr.send();
+		});
 	}
 
 	fetch('https://m.facebook.com/stories.php', maxDepth, function () {
@@ -51,57 +64,45 @@ function getNewsFeedFrequency(maxDepth, done, onFetch) {
 	});
 }
 
-function getPageLikes(pageId, done) {
+function getPageLikes(pageId, done, onFetch) {
 	console.log('getPageLikes', pageId);
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://m.facebook.com/profile.php?id=' + pageId, true);
-	xhr.onreadystatechange = function (e) {
-		if (xhr.readyState == 4) {
-			var text = xhr.responseText;
-			var $t = $(text);
-			var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+	get('https://m.facebook.com/profile.php?id=' + pageId, function (text) {
+		var $t = $(text);
+		var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+		onFetch();
 
-			var xhr2 = new XMLHttpRequest();
-			xhr2.open('GET', url2, true);
-			xhr2.onreadystatechange = function (e) {
-				if (xhr2.readyState == 4) {
-					var $t = $(xhr2.responseText);
-					var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
-						return $(this).attr('href')
-					}).get();
-					done(profileUrls);
-				}
-			}
-			xhr2.send();
-		}
-	}
-	xhr.send();
+		get(url2, function (text2) {
+			var $t = $(text2);
+			var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
+				return $(this).attr('href')
+			}).get();
+			onFetch();
+			done(profileUrls);
+		});
+	});
 }
 
 function getAllFriendScores2(done, progress) {
-	var maxNewsFeedDepth = 10;
+	var maxNewsFeedDepth = 30;
 
 	var pageIds = getAllPageIds();
 	var profileToPages = {};
 	var profileToFrequency;
 	pageIds.forEach(function (pageId) {
-		setTimeout(function () {
-			getPageLikes(pageId, function (profiles) {
-				profiles.forEach(function (profile) {
-					if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
-					profileToPages[profile].push(pageId);
-				});
-				onProgress();
-				onReturn();
+		getPageLikes(pageId, function (profiles) {
+			profiles.forEach(function (profile) {
+				if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
+				profileToPages[profile].push(pageId);
 			});
-		}, Math.random() * 1000);
+			onReturn();
+		}, onProgress);
 	});
 	getNewsFeedFrequency(maxNewsFeedDepth, function (data, progress) {
 		profileToFrequency = data;
 		onReturn();
 	}, onProgress);
 
-	var totalProgress = maxNewsFeedDepth + pageIds.length;
+	var totalProgress = maxNewsFeedDepth + 2 * pageIds.length;
 	var elapsedProgress = 0;
 
 	function onProgress() {
@@ -187,9 +188,6 @@ function getFriends(done) {
 	xhr.send();
 }
 
-var lastRequestTime = 0;
-var requestInterval = 200;
-
 function parsePage(url, done) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
@@ -251,11 +249,7 @@ function parsePage(url, done) {
 			// }
 		}
 	}
-	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * 300;
-	lastRequestTime = delay + (+new Date());
-	setTimeout(function () {
-		xhr.send();
-	}, delay);
+	xhr.send();
 }
 
 function buildQueryUrl(userId, newsSourceIds) {
@@ -318,7 +312,6 @@ function getAllFriendScores(done) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log("Incoming message", request, sender);
 	if (request.action == "parse") {
 		// parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
 		// getFriends();
@@ -345,6 +338,5 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 				},
 			});
 		});
-		sendResponse('a');
 	}
 });
