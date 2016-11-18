@@ -1,15 +1,16 @@
 var userIds = [];
-for (var i = 0; i < 500; i++) {
+for (var i = 0; i < 200; i++) {
     userIds.push(Math.floor(Math.random() * 1000000));
 }
 
 var userData = userIds.map(function (id) {
-    return {
+    var data = {
         userId: id,
         score: 2 * Math.random() * Math.random() - 1,
         confidence: 10 * Math.random() + 1,
-        frequency: Math.random() < 0.3 ? Math.floor(Math.random() * 10) : 0,
     };
+    data.frequency = Math.random() < 0.3 ? Math.floor(Math.random() * 10 * (1.5 - Math.abs(data.score - 0.3))) : 0;
+    return data;
 });
 
 var margin = {
@@ -33,7 +34,7 @@ var y = d3.scaleLinear()
 
 var y2 = d3.scaleLinear()
     .domain([0, 1])
-    .range([height, 0]);
+    .range([height, height / 2]);
 
 var line = d3.line()
     .x(function (d) {
@@ -43,24 +44,42 @@ var line = d3.line()
         return y2(d[1]);
     });
 
+var area = d3.area()
+    .x(function (d) {
+        return x(d[0]);
+    })
+    .y0(y2(0))
+    .y1(function (d) {
+        return y2(d[1]);
+    });
+
 var simulation = d3.forceSimulation(userData)
-    .alphaDecay(0.1)
+    .alphaDecay(0.08)
     .force("x", d3.forceX().x(function (d) {
         return x(d.score);
     }).strength(1))
-    .force("y", d3.forceY(y(0)))
+    .force("y", d3.forceY(y(0)).strength(1))
     .force("collide", d3.forceCollide(4).iterations(10))
-    .on('tick', ticked);
-
-for (var i = 0; i < 300; ++i) simulation.tick();
-
+    .on('tick', ticked)
+    .stop();
 
 $('html').click(function () {
     nodes
         .transition()
+        .ease(d3.easeCubicOut)
+        .duration(500)
         .attr('r', function (d) {
             return d.frequency + 1;
         });
+
+    lines
+        .transition()
+        .ease(d3.easeCubicOut)
+        .duration(500)
+        .attr('opacity', function (d) {
+            return d.frequency > 0;
+        });
+
     simulation
         .force("y", d3.forceY().y(function (d) {
             return y(d.frequency);
@@ -77,13 +96,28 @@ $('html').click(function () {
             newsFeedItems.push(e);
         }
     });
-    main.append("path")
+    main.insert("path", ':first-child')
         .datum(kdeDatum)
-        .attr("class", "line")
+        .attr("class", "line2")
         .attr("d", line)
+        .attr('opacity', 0)
         .datum(kde(newsFeedItems))
         .transition()
+        .ease(d3.easeCubicOut)
+        .duration(1000)
+        .attr('opacity', 1)
         .attr("d", line);
+    main.insert("path", ':first-child')
+        .datum(kdeDatum)
+        .attr("class", "area2")
+        .attr("d", area)
+        .attr('opacity', 0)
+        .datum(kde(newsFeedItems))
+        .transition()
+        .ease(d3.easeCubicOut)
+        .duration(1000)
+        .attr('opacity', 1)
+        .attr("d", area);
     $('html').off('click');
 })
 
@@ -103,6 +137,12 @@ var g = main.append("svg:g");
 
 var colorRamp = d3.scaleLinear().domain([-1, 1]).range(["blue", "red"]);
 
+var lines = g.selectAll('line')
+    .data(userData)
+    .enter().append('line')
+    .attr('class', 'node-line')
+    .attr('opacity', 0);
+
 var nodes = g.selectAll("scatter-dots")
     .data(userData)
     .enter().append("svg:circle")
@@ -117,6 +157,20 @@ function ticked() {
             return d.x;
         })
         .attr("cy", function (d) {
+            return d.y;
+        });
+
+    lines
+        .attr('x1', function (d) {
+            return d.x;
+        })
+        .attr('y1', function (d) {
+            return y(0);
+        })
+        .attr('x2', function (d) {
+            return d.x;
+        })
+        .attr('y2', function (d) {
             return d.y;
         });
 }
@@ -149,3 +203,13 @@ main.append("path")
     .datum(kdeDatum)
     .attr("class", "line")
     .attr("d", line);
+
+main.append("path")
+    .datum(kdeDatum)
+    .attr("class", "area")
+    .attr("d", area);
+
+setTimeout(function () {
+    for (var i = 0; i < 300; ++i) simulation.tick();
+    ticked();
+}, 1);
