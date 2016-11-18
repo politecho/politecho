@@ -1,10 +1,10 @@
-## PolitEcho 
+# PolitEcho 
 
 As students of a small liberal arts college in New Jersey, we were completely convinced that Hillary Clinton would be our next president. So when Donald Trump crossed the 270 Electoral College points threshold, we asked ourselves, how were we so wrong? Our Facebook news feeds promised a Clinton landslide that failed to materialize. Thus we realized that our small liberal arts college in New Jersey friends do not represent America. According to John Oliver of *Last Week Tonight with John Oliver*, we’re “just sounding off on the internet or sharing think pieces or videos like this one, that echo around your bubble.” So naturally we ask ourselves, do we actually live in a bubble on Facebook? And how strong is the echo? Thus emerged PolitEcho. 
 
 
 
-# The Political Science Behind PolitEcho 
+## The Political Science Behind PolitEcho 
 
 
 One of our team members is currently taking American Politics, of which an entire week was devoted to studying the concept of public opinion. In *The Nature and Origins of Mass Opinion*, political scientist John Zaller presents his famous RAS(Receive-Accept-Sample) model of public opinion. It was based on Four Axioms. 
