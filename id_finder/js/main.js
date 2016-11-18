@@ -41,16 +41,21 @@ $(document).ready(function() {
       }, 700);
     } else {
       // chrome.storage.local.clear();
-      getStoredResponse(function(userData) {
-        if (userData) {
-          setTimeout(function () {
-            loadChart(userData);
-          }, 700);
-        }
-        else {
-          chrome.runtime.sendMessage({ action: 'parse' });
-        }
-      })
+      if (window.location.hash == '#cache') {
+        getStoredResponse(function(userData) {
+          if (userData) {
+            setTimeout(function () {
+              loadChart(userData);
+            }, 700);
+          }
+          else {
+            chrome.runtime.sendMessage({ action: 'parse' });
+          }
+        });
+      }
+      else {
+        chrome.runtime.sendMessage({ action: 'parse' });
+      }
     }
   });
 
