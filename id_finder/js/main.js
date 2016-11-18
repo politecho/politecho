@@ -8,6 +8,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 
 $(document).ready(function() {
   $('.pt-page-1').click(function () {
+    PageTransitions.nextPage();
     if (window.location.hash == '#test') {
       var userIds = [];
       for (var i = 0; i < 200; i++) {
@@ -24,12 +25,12 @@ $(document).ready(function() {
           return data;
       });
       
-      loadChart(userData);
+      setTimeout(function () {
+        loadChart(userData);
+      }, 700);
     } else {
       chrome.runtime.sendMessage({ action: 'parse' });
     }
-
-    PageTransitions.nextPage();
   });
 
   $('.pt-page-4').click(function () {
