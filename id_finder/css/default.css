@@ -102,12 +102,14 @@ h5, p, text {
 }
 
 .col-left {
+	display: inline-block;
 	position: absolute;
 	left: 50px;
 	width: 45%;
 	max-width: 500px;
 }
 .col-right {
+	display: inline-block;
 	position: absolute;
 	left: 50%;
 	width: 45%;
