@@ -74,7 +74,10 @@ function getPageLikes(pageId, done, onFetch) {
 		get(url2, function (text2) {
 			var $t = $(text2);
 			var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
-				return $(this).attr('href')
+				return {
+					href: $(this).attr('href'),
+					name: $(this).text(),
+				};
 			}).get();
 			onFetch();
 			done(profileUrls);
@@ -87,12 +90,15 @@ function getAllFriendScores2(done, progress) {
 
 	var pageIds = getAllPageIds();
 	var profileToPages = {};
+	var profileToName = {};
 	var profileToFrequency;
 	pageIds.forEach(function (pageId) {
 		getPageLikes(pageId, function (profiles) {
 			profiles.forEach(function (profile) {
-				if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
-				profileToPages[profile].push(pageId);
+				if (!profileToPages.hasOwnProperty(profile.href)) profileToPages[profile.href] = [];
+				profileToPages[profile.href].push(pageId);
+
+				if (!profileToName.hasOwnProperty(profile.href)) profileToName[profile.href] = profile.name;
 			});
 			onReturn();
 		}, onProgress);
@@ -119,6 +125,7 @@ function getAllFriendScores2(done, progress) {
 				var scores = score(profileToPages[profile]);
 				return {
 					userId: profile,
+					name: profileToName[profile],
 					frequency: profileToFrequency[profile] || 0,
 					score: scores.politicalScore,
 					//frequency: scores.frequency, 
