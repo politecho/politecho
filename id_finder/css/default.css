@@ -94,6 +94,12 @@ h5, p, text {
 	line-height: 21px;
 }
 
+.politecho {
+	display: inline-block;
+	width: 30%;
+	color: #840094;
+}
+
 #load-spinner {
 	position: absolute;
 	left: 25%;
