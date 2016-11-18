@@ -107,7 +107,9 @@ function loadChart(userData) {
             pies(userData);
             $(this).off('click');
             $(this).hide();
-            $("p.hifrom").show();
+            $("p.hifrom")
+                .css({position: 'relative', top: '10px', opacity: 0, display: 'block'})
+                .animate({opacity: 1, top: 0}, 400);
         });
         $('.pt-page-3 .button.back').show();
         return false;
