@@ -123,6 +123,9 @@ function loadChart(userData) {
         })
         .attr("fill", function (d, i) {
             return colorRamp(d.score);
+        })
+        .attr('opacity', function (d) {
+            return d.confidence;
         });
 
     function updateBounds() {
