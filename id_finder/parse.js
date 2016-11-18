@@ -18,6 +18,7 @@ function getNewsFeedFrequency(done) {
 	var frequency = {};
 
 	function fetch(url, depth, fetchDone) {
+		console.log('getNewsFeedFrequency.fetch', depth);
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);
 		xhr.onreadystatechange = function (e) {
@@ -48,6 +49,7 @@ function getNewsFeedFrequency(done) {
 }
 
 function getPageLikes(pageId, done) {
+	console.log('getPageLikes', pageId);
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', 'https://m.facebook.com/profile.php?id=' + pageId, true);
 	xhr.onreadystatechange = function (e) {
@@ -69,6 +71,40 @@ function getPageLikes(pageId, done) {
 		}
 	}
 	xhr.send();
+}
+
+function getAllFriendScores2(done) {
+	var pageIds = getAllPageIds();
+	var profileToPages = {};
+	var profileToFrequency;
+	pageIds.forEach(function (pageId) {
+		getPageLikes(pageId, function (profiles) {
+			profiles.forEach(function (profile) {
+				if (!profileToPages.hasOwnProperty(profile)) profileToPages[profile] = [];
+				profileToPages[profile].push(pageId);
+			});
+			onReturn();
+		});
+	});
+	getNewsFeedFrequency(function (data) {
+		profileToFrequency = data;
+		onReturn();
+	})
+
+	var numReturnsRemaining = 1 + pageIds.length;
+	function onReturn() {
+		numReturnsRemaining--;
+		if (numReturnsRemaining == 0) {
+			var results = Object.keys(profileToPages).map(function (profile) {
+				return {
+					userId: profile,
+					frequency: profileToFrequency[profile] || 0,
+					score: score(profileToPages[profile]),
+				}
+			});
+			done(results);
+		}
+	}
 }
 
 function parseDOM(document_root) {
@@ -268,8 +304,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 		// 	console.log(results);
 		// });
 		// getPageLikes('6013004059');
-		getNewsFeedFrequency(function (frequency) {
-			console.log(frequency);
+		// getNewsFeedFrequency(function (frequency) {
+		// 	console.log(frequency);
+		// });
+		getAllFriendScores2(function (data) {
+			console.log(data);
 		});
 		sendResponse('a');
 	}
