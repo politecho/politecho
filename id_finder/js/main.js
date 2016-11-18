@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 });
 
 $(document).ready(function() {
-  $('.pt-page-1').click(function () {
+  $('.pt-page-1 .button').click(function () {
     PageTransitions.nextPage();
     if (window.location.hash == '#test') {
       var userIds = [];
