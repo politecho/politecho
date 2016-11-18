@@ -1,35 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
   <title>The d3 test</title>
   <style>
-    .chart {
-
-    }
-
+    .chart {}
+    
     .main text {
-      font: 10px sans-serif;  
+      font: 10px sans-serif;
     }
-
-    .axis line, .axis path {
+    
+    .axis line,
+    .axis path {
       shape-rendering: crispEdges;
       stroke: black;
       fill: none;
     }
-
-    .axis text, .axis .tick { display: none; }
-
+    
+    .axis text,
+    .axis .tick {
+      display: none;
+    }
+    
     circle {
       fill: steelblue;
     }
-
+    
+    .line {
+      fill: none;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
   </style>
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  </head>
-  <body>
-    <div class='content'>
-      <!-- /the chart goes here -->
-    </div>
-    <script type="text/javascript" src="main.js"></script>
-  </body>
+</head>
+
+<body>
+  <div class='content'>
+    <!-- /the chart goes here -->
+  </div>
+  <script type="text/javascript" src="main.js"></script>
+</body>
+
 </html>

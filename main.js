@@ -31,6 +31,10 @@ var y = d3.scaleLinear()
     })])
     .range([0, height]);
 
+var y2 = d3.scaleLinear()
+    .domain([0, 1])
+    .range([height, 0]);
+
 var simulation = d3.forceSimulation(userData)
     .force("x", d3.forceX(function (d) {
         return x(d.score);
@@ -83,3 +87,39 @@ g.selectAll("scatter-dots")
         return d.y;
     })
     .attr("r", 3);
+
+var numHistBins = Math.ceil(Math.sqrt(userData.length));
+var bandwith = 1;
+
+function kernelDensityEstimator(kernel, xs) {
+    return function (sample) {
+        return xs.map(function (x) {
+            return [x, d3.mean(sample, function (v) {
+                return kernel(x - v.score);
+            })];
+        });
+    };
+}
+
+function epanechnikovKernel(bandwith) {
+    return function (u) {
+        if (Math.abs(u = u / bandwith) <= 1) {
+            return 0.75 * (1 - u * u) / bandwith;
+        } else return 0;
+    };
+}
+
+var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
+console.log(kde(userData));
+
+main.append("path")
+    .datum(kde(userData))
+    .attr("class", "line")
+    .attr("d", d3.line()
+        .x(function (d) {
+            return x(d[0]);
+        })
+        .y(function (d) {
+            return y2(d[1]);
+        })
+    );
