@@ -11,29 +11,30 @@ function parsePage(url) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
 	xhr.onreadystatechange = function(e) {
-		var ids = [];
-		var regexp = /_15kr _5a-2/g;
-		var match;
-		
-		//var text = xhr.responseText.replace(/&quot;/g, '\"');
-		
-		var text = unescape(xhr.responseText);
-		text = text.replace(/&quot;/g, '\"');
-		text = text.replace(/&#123;/g, '{');
-		text = text.replace(/&#125;/g, '}');
-		
-		while ((match = regexp.exec(text)) != null) {
-			var start = match.index + text.substring(match.index).indexOf("{");
-			var end = start + text.substring(start).indexOf(",\"");
+		if (xhr.readyState ==4){
+			var ids = [];
+			var regexp = /_15kr _5a-2/g;
+			var match;
 			
-			ids.push(text.substring(match.index));
+			//var text = xhr.responseText.replace(/&quot;/g, '\"');
+			
+			var text = unescape(xhr.responseText);
+			text = text.replace(/&quot;/g, '\"');
+			text = text.replace(/&#123;/g, '{');
+			text = text.replace(/&#125;/g, '}');
+			
+			while ((match = regexp.exec(text)) != null) {
+				var start = match.index + text.substring(match.index).indexOf("{");
+				var end = start + text.substring(start).indexOf("}") + 1;
+				ids.push(JSON.parse(text.slice(start,end)).share_id);
+			}
+			if (ids.length > 0) {
+				chrome.runtime.sendMessage({
+						action: "parse",
+						source: ids
+				});
+			};
 		}
-		if (ids.length > 0) {
-			chrome.runtime.sendMessage({
-					action: "parse",
-					source: ids
-			});
-		};
 	}
 	xhr.send();
 }
