@@ -84,6 +84,7 @@ $('html').click(function () {
         .datum(kde(newsFeedItems))
         .transition()
         .attr("d", line);
+    $('html').off('click');
 })
 
 var chart = d3.select('body')
