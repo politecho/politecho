@@ -178,6 +178,34 @@ function loadChart(userData) {
         });
     }
 
+    function tickedOffset() {
+        updateBounds();
+
+        nodes
+            .attr("cx", function (d) {
+                return d.x;
+            })
+            .attr("cy", function (d) {
+                return d.y - 50;
+            });
+    }
+
+    function tickedTransitionReset() {
+        nodes
+            .transition()
+            .duration(600)
+            .ease(d3.easeCubicInOut)
+            .delay(function (d) {
+                return Math.random() * 300;
+            })
+            .attr("cx", function (d) {
+                return d.x;
+            })
+            .attr("cy", function (d) {
+                return d.y;
+            });
+    }
+
     function ticked() {
         updateBounds();
 
@@ -242,11 +270,12 @@ function loadChart(userData) {
                 for (var i = 0; i < userData.length; i++) {
                     Object.assign(userData[i], e.data.userData[i]);
                 }
-                ticked();
+                tickedOffset();
                 window.doneLoading = true; // im sorry
                 setTimeout(function() {
                     PageTransitions.nextPage();
-                }, 800);
+                    setTimeout(tickedTransitionReset, 100);
+                }, 1000);
                 break;
         }
     }
