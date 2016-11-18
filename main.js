@@ -45,6 +45,21 @@ var simulation = d3.forceSimulation(userData)
 
 for (var i = 0; i < 300; ++i) simulation.tick();
 
+
+$('html').click(function() {
+  console.log("bruh")
+
+  d3.forceSimulation(userData)
+      .force("x", d3.forceX(function (d) {
+          return x(d.score);
+      }).strength(1))
+      .force("y", d3.forceY(function (d) {
+          return y(d.frequency);
+      }).strength(1))
+      .force("collide", d3.forceCollide(4))
+      // .alpha()
+})
+
 var chart = d3.select('body')
     .append('svg:svg')
     .attr('width', width + margin.right + margin.left)
@@ -59,7 +74,7 @@ var main = chart.append('g')
 
 var g = main.append("svg:g");
 
-var colorRamp = d3.scaleLinear().domain([-1, 1]).range(["red", "blue"]);
+var colorRamp = d3.scaleLinear().domain([-1,1]).range(["blue","red"]);
 
 var nodes = g.selectAll("scatter-dots")
     .data(userData)
@@ -101,7 +116,6 @@ function epanechnikovKernel(bandwith) {
 }
 
 var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
-console.log(kde(userData));
 
 main.append("path")
     .datum(kde(userData))
