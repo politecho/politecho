@@ -36,6 +36,7 @@ var y2 = d3.scaleLinear()
     .range([height, 0]);
 
 var simulation = d3.forceSimulation(userData)
+    .alphaDecay(0.1)
     .force("x", d3.forceX().x(function (d) {
         return x(d.score);
     }).strength(1))
@@ -47,10 +48,18 @@ for (var i = 0; i < 300; ++i) simulation.tick();
 
 
 $('html').click(function () {
+    nodes
+        .transition()
+        .attr('r', function (d) {
+            return d.frequency + 1;
+        });
     simulation
         .force("y", d3.forceY().y(function (d) {
             return y(d.frequency);
         }))
+        .force("collide", d3.forceCollide(function (d) {
+            return d.frequency + 2;
+        }).iterations(10))
         .alpha(1)
         .restart();
 })
