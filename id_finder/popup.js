@@ -1,11 +1,11 @@
 chrome.runtime.onMessage.addListener(function(request, sender) {
 		if (request.action == "parse") {
-			message.innerText = request.source;
+			message.innerText += "\n[" + request.source.toString() + "]";
 		}
 });
 
 function onWindowLoad() {
-	
+	console.log("Window load");
 	var message = document.querySelector('#message');
 	
 	chrome.tabs.executeScript(null, {
