@@ -38,6 +38,14 @@ body {
 .pt-page-3 svg {
 	margin-left: -57px;
 }
+.pt-page-3 svg circle {
+	cursor: pointer;
+}
+
+.tooltip {
+	background: white;
+	padding: 4px;
+}
 
 .pt-page-4 svg {
 	position: absolute;

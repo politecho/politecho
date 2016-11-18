@@ -132,6 +132,10 @@ function loadChart(userData) {
         .attr('opacity', function (d) {
             return d.confidence;
         })
+        .on("click", function(d) {
+            chrome.tabs.create({url: "https://www.facebook.com" + d.userId});
+            return false;
+        })
         .on("mouseover", function(d){
             tooltip.text(d.userId);
             return tooltip.style("visibility", "visible");
@@ -141,6 +145,7 @@ function loadChart(userData) {
 
     var tooltip = d3.select("body")
         .append("div")
+        .attr("class", "tooltip")
         .style("position", "absolute")
         .style("z-index", "10")
         .style("visibility", "hidden");
