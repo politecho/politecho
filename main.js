@@ -4,11 +4,11 @@ var margin = {top: 20, right: 15, bottom: 60, left: 60}
   , width = 960 - margin.left - margin.right
   , height = 500 - margin.top - margin.bottom;
 
-var x = d3.scale.linear()
+var x = d3.scaleLinear()
           .domain([0, d3.max(data, function(d) { return d[0]; })])
           .range([ 0, width ]);
 
-var y = d3.scale.linear()
+var y = d3.scaleLinear()
           .domain([0, d3.max(data, function(d) { return d[1]; })])
           .range([ height, 0 ]);
 
@@ -25,9 +25,8 @@ var main = chart.append('g')
                 .attr('class', 'main')   
     
 // draw the x axis
-var xAxis = d3.svg.axis()
-              .scale(x)
-              .orient('bottom');
+var xAxis = d3.axisBottom()
+              .scale(x);
 
 main.append('g')
     .attr('transform', 'translate(0,' + height + ')')
@@ -35,9 +34,8 @@ main.append('g')
     .call(xAxis);
 
 // draw the y axis
-var yAxis = d3.svg.axis()
-              .scale(y)
-              .orient('left');
+var yAxis = d3.axisLeft()
+              .scale(y);
 
 main.append('g')
     .attr('transform', 'translate(0,0)')
