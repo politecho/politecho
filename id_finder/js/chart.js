@@ -34,16 +34,6 @@ function loadChart(userData) {
             return y2(d[1]);
         });
 
-    var simulation = d3.forceSimulation(userData)
-        .alphaDecay(0.08)
-        .force("x", d3.forceX().x(function (d) {
-            return x(d.score);
-        }).strength(1))
-        .force("y", d3.forceY(y(0)).strength(1))
-        .force("collide", d3.forceCollide(4).iterations(10))
-        .on('tick', ticked)
-        .stop();
-
     $('.pt-page-3').click(function () {
         userData.forEach(function (d) {
             d.r = Math.sqrt(d.frequency) * 3 + 2;
@@ -65,15 +55,18 @@ function loadChart(userData) {
                 return d.frequency > 0;
             });
 
-        simulation
+        var simulation = d3.forceSimulation(userData)
+            .alphaDecay(0.08)
+            .force("x", d3.forceX().x(function (d) {
+                return d.score;
+            }).strength(1))
             .force("y", d3.forceY().y(function (d) {
-                return y(d.frequency);
+                return d.frequency;
             }))
             .force("collide", d3.forceCollide(function (d) {
                 return d.r + 1;
             }).iterations(10))
-            .alpha(1)
-            .restart();
+            .on('tick', ticked);
 
         var newsFeedItems = [];
         userData.forEach(function (e) {
@@ -131,35 +124,44 @@ function loadChart(userData) {
 
         nodes
             .attr("cx", function (d) {
-                return d.x;
+                return x(d.x);
             })
             .attr("cy", function (d) {
-                return d.y;
+                return y(d.y);
             });
 
         lines
             .attr('x1', function (d) {
-                return d.x;
+                return x(d.x);
             })
             .attr('y1', function (d) {
                 return y(0);
             })
             .attr('x2', function (d) {
-                return d.x;
+                return x(d.x);
             })
             .attr('y2', function (d) {
-                return d.y;
+                return y(d.y);
             });
     }
 
     var numHistBins = Math.ceil(Math.sqrt(userData.length));
     var bandwith = 1;
 
-    setTimeout(function () {
-        for (var i = 0; i < 100; ++i) {
-            simulation.tick();
-            updateBounds();
+    var worker = new Worker('js/worker.js');
+    worker.postMessage({ userData: userData, width: width, height: height });
+    worker.onmessage = function (e) {
+        switch (e.data.type) {
+            case 'tick':
+                console.log(e.data.progress);
+                break;
+            case 'end':
+                for (var i = 0; i < userData.length; i++) {
+                    console.log(userData[i], e.data.userData[i]);
+                    Object.assign(userData[i], e.data.userData[i]);
+                }
+                ticked();
+                break;
         }
-        ticked();
-    }, 1);
+    }
 }
