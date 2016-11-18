@@ -53,7 +53,7 @@ function loadChart(userData) {
             .ease(d3.easeCubicOut)
             .duration(500)
             .attr('opacity', function (d) {
-                return d.frequency > 0;
+                return d.frequency > 0 ? d.confidence : 0;
             });
 
         var simulation = d3.forceSimulation(userData)
@@ -103,14 +103,12 @@ function loadChart(userData) {
             })
             .animate({top: '10px'}, 0)
             .animate({opacity: 1, top: 0}, 200);
-        //     .
-        // setTimeout(function () {
-        //     $('.pt-page-3 p').first()
-        //         .css({transition: 'none'})
-        //         .css({top: '20px'})
-        //         .text("And here's the political sentiment of just your news feed.")
-        //         .css({opacity: 1, top: 0});
-        // }, 250);
+        $(this).click(function() {
+            pies(userData);
+            $(this).off('click');
+            $(this).hide();
+            $("p.hifrom").show();
+        });
         $('.pt-page-3 .button.back').show();
         return false;
     });

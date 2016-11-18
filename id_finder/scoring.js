@@ -29,6 +29,14 @@ news_dict["197311240419563"] = ul; // Late Night with Seth Meyers
 news_dict["545775132233909"] = ul; //Late Show with Stephen Colbert 
 news_dict["1765033567057615"] = ul; //Full Frontal with Samantha Bee 
 news_dict["479042895558058"] = ul; //Last Week Tonight with John Oliver 
+news_dict["445821135487302"] = ul; //Inside Amy Schumer 
+news_dict["908009612563863"] = ul; //NowThis Election 
+news_dict["223649167822693"] = ul; //Vox 
+news_dict["10606591490"] = ul; //Time 
+news_dict["5863113009"] = ul; //LA Times 
+news_dict["18343191100"] = ul; //Newsweek 
+news_dict["167115176655082"] = ul; //Vice 
+news_dict["174742062548592"] = ul; //Mic Media 
 
 news_dict["131459315949"] = l; //CBS News
 news_dict["19440638720"] = l; //Wired 
@@ -56,6 +64,13 @@ news_dict["85452072376"] = uc; //NewsMax
 news_dict["182919686769"] = uc; //DailyCaller
 news_dict["912274352202712"] = uc; //DailyCaller Politics
 news_dict["35994014410"] = uc; //The Washington Times 
+news_dict["408250066356"] = uc; //Bill O'Reilly 
+news_dict["123624513983"] = uc; //Western Journalism 
+news_dict["519305544814653"] = uc; //Conservative Tribune
+news_dict["112623813202"] = uc; //LifeSiteNews
+news_dict["193266897438"] = uc; //Pamela Geller
+news_dict["169204449790211"] = uc; //Conservative News Today 
+news_dict["158924294183807"] = uc; //Allen West Republic 
 
 //Fake news  
 var ulf = -1;
@@ -128,6 +143,7 @@ pol_dict["86574174383"] = ulp; //Nancy Pelosi
 pol_dict["889307941125736"] = ulp; //Hillary Clinton 
 pol_dict["7656215652"] = ulp; //Tim Kaine 
 pol_dict["482778861771212"] = ulp; //US Senator Tim Kaine 
+pol_dict["180213475460766"] = ulp; //Liberal America 
 
 pol_dict["207116912648950"] = ucp; //Reince Priebus 
 pol_dict["259130650776119"] = ucp; //Mitch McConnell 
@@ -150,6 +166,7 @@ pol_dict["261624820205"] = ucp; //Carly Fiorina
 pol_dict["44746457369"] = ucp; //Rick Santorum
 pol_dict["54172246106"] = ucp; //Rand Paul 
 pol_dict["6934857868"] = ucp; //Mike Huckabee 
+pol_dict["134193140910"] = ucp; //Being Conservative 
 
 function score(post_ids) {
 	var score = 0;
