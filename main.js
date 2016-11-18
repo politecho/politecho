@@ -8,7 +8,7 @@ var userData = userIds.map(function (id) {
         userId: id,
         score: 2 * Math.random() * Math.random() - 1,
         confidence: 10 * Math.random() + 1,
-        frequency: Math.floor(Math.random() * 10),
+        frequency: Math.random() < 0.3 ? Math.floor(Math.random() * 10) : 0,
     };
 });
 
@@ -29,7 +29,7 @@ var y = d3.scaleLinear()
     .domain([0, d3.max(userData, function (d) {
         return d.frequency;
     })])
-    .range([0, height]);
+    .range([height, 0]);
 
 var y2 = d3.scaleLinear()
     .domain([0, 1])
@@ -39,25 +39,20 @@ var simulation = d3.forceSimulation(userData)
     .force("x", d3.forceX().x(function (d) {
         return x(d.score);
     }).strength(1))
-    .force("y", d3.forceY(height))
-    .force("collide", d3.forceCollide(4))
+    .force("y", d3.forceY(y(0)))
+    .force("collide", d3.forceCollide(4).iterations(10))
     .on('tick', ticked);
 
 for (var i = 0; i < 300; ++i) simulation.tick();
 
 
-$('html').click(function() {
-  console.log("bruh")
-
-  d3.forceSimulation(userData)
-      .force("x", d3.forceX(function (d) {
-          return x(d.score);
-      }).strength(1))
-      .force("y", d3.forceY(function (d) {
-          return y(d.frequency);
-      }).strength(1))
-      .force("collide", d3.forceCollide(4))
-      // .alpha()
+$('html').click(function () {
+    simulation
+        .force("y", d3.forceY().y(function (d) {
+            return y(d.frequency);
+        }))
+        .alpha(1)
+        .restart();
 })
 
 var chart = d3.select('body')
@@ -74,7 +69,7 @@ var main = chart.append('g')
 
 var g = main.append("svg:g");
 
-var colorRamp = d3.scaleLinear().domain([-1,1]).range(["blue","red"]);
+var colorRamp = d3.scaleLinear().domain([-1, 1]).range(["blue", "red"]);
 
 var nodes = g.selectAll("scatter-dots")
     .data(userData)
