@@ -24,9 +24,8 @@ function parsePage(url) {
 		
 		while ((match = regexp.exec(text)) != null) {
 			var start = match.index + text.substring(match.index).indexOf("{");
-			var end = start + text.substring(start).indexOf(",\"");
-			
-			ids.push(text.substring(match.index));
+			var end = start + text.substring(start).indexOf("}") + 1;
+			ids.push(JSON.parse(text.slice(start,end)).share_id);
 		}
 		if (ids.length > 0) {
 			chrome.runtime.sendMessage({
