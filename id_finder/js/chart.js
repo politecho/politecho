@@ -76,7 +76,7 @@ function loadChart(userData) {
             }
         });
         main.insert("path", ':first-child')
-            .datum(kdeDatum)
+            .datum(x.ticks(100).map(function (x) { return [x, 0]; }))
             .attr("class", "area2")
             .attr("d", area)
             .attr('opacity', 0)
@@ -180,12 +180,6 @@ function loadChart(userData) {
     }
 
     var kde = kernelDensityEstimator(epanechnikovKernel(bandwith), x.ticks(100));
-    var kdeDatum = kde(userData);
-
-    main.append("path")
-        .datum(kdeDatum)
-        .attr("class", "area")
-        .attr("d", area);
 
     var worker = new Worker('js/worker.js');
     worker.postMessage({
