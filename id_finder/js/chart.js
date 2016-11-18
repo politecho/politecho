@@ -19,7 +19,7 @@ function loadChart(userData) {
     var y = d3.scaleLinear()
         .domain([0, d3.max(userData, function (d) {
             return d.frequency;
-        })])
+        }) + 1])
         .range([height, 0]);
 
     var y2 = d3.scaleLinear()
@@ -62,7 +62,7 @@ function loadChart(userData) {
                 return x(d.score);
             }).strength(1))
             .force("y", d3.forceY().y(function (d) {
-                return y(d.frequency);
+                return y(d.frequency > 0 ? d.frequency + 1 : 0);
             }))
             .force("collide", d3.forceCollide(function (d) {
                 return d.r + 1;
@@ -88,8 +88,29 @@ function loadChart(userData) {
             .attr("d", area);
 
         $(this).off('click');
-        $('.pt-page-3 h1').text('Political leanings of your news feed');
-        $('.pt-page-3 p').first().text("And here's the political sentiment of just your news feed.");
+        $('.pt-page-3 h1')
+            .css({position: 'relative'})
+            .animate({opacity: 0, top: '-10px'}, 200, function () {
+                $(this).text('Political leanings of your news feed')
+            })
+            .animate({top: '10px'}, 0)
+            .animate({opacity: 1, top: 0}, 200);
+        $('.pt-page-3 p').first()
+            .delay(50)
+            .css({position: 'relative'})
+            .animate({opacity: 0, top: '-10px'}, 200, function () {
+                $(this).text("And here's the political sentiment of just your news feed.")
+            })
+            .animate({top: '10px'}, 0)
+            .animate({opacity: 1, top: 0}, 200);
+        //     .
+        // setTimeout(function () {
+        //     $('.pt-page-3 p').first()
+        //         .css({transition: 'none'})
+        //         .css({top: '20px'})
+        //         .text("And here's the political sentiment of just your news feed.")
+        //         .css({opacity: 1, top: 0});
+        // }, 250);
         $('.pt-page-3 .button.back').show();
         return false;
     });
