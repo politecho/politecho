@@ -271,9 +271,65 @@ function loadChart(userData) {
                     Object.assign(userData[i], e.data.userData[i]);
                 }
                 tickedOffset();
-                PageTransitions.nextPage();
-                setTimeout(tickedTransitionReset, 100);
+                window.doneLoading = true; // im sorry
+                setTimeout(function() {
+                    PageTransitions.nextPage();
+                    setTimeout(tickedTransitionReset, 100);
+                }, 1000);
                 break;
         }
     }
 }
+
+$(document).ready(function() {
+
+  var w     = 200;
+  var h     = 200;
+  var x     = (w/2);
+  var y     = (h/2);
+  var t0    = new Date().setHours(0,0,0,0);
+  var delta = (Date.now() - t0);
+  var r = 5;
+  var R = 50;
+
+  var svg = d3.select('#load-spinner')
+          .attr("width", w)
+          .attr("height", h);
+
+  // planet group
+  var container = svg.append("g")
+    .attr("id", "orbit_container")
+    .attr("transform", "translate(" + x + "," + y + ")");
+
+  var colorRamp = d3.scaleLinear().domain([0, 300]).range(["blue", "red"]);
+  var planets = [0, 60, 120, 180, 240, 300]
+
+  // draw planets and moon clusters
+    container.selectAll("g.planet").data(planets).enter().append("g")
+             .attr("class", "planet_cluster").each(function(d, i) {
+               d3.select(this).append("circle").attr("r", r).attr("cx",R)
+                 .attr("cy", 0).attr("class", "planet").attr("fill", function(d) {
+                    return colorRamp((d - 1) % 180 + 1);
+                 });
+             })
+             .attr("transform", function(d) {
+               return "rotate(" + d + ")";
+             });
+
+             //animations
+      window.loadingAnimInterval = setInterval(function(){
+        var delta = (Date.now() - t0);
+        svg.selectAll(".planet_cluster").attr("transform", function(d) {
+          return "rotate(" + (d + delta / 100) + ")";
+        }).each(function(d, i) {
+          d3.select(this).select("circle").attr("cx", function(d) {
+            if (window.doneLoading) {
+                return R + R/2 * Math.abs(Math.sin(delta / 100));
+            }
+            return R - R/2 * Math.sin(delta / 500);
+          }).attr("r", function(d) {
+            return r + r / 2 * Math.sin(delta / 500);
+          });
+        })
+      }, 40);
+})
