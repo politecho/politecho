@@ -123,7 +123,7 @@ function getAllFriendScores2(done, progress) {
 					score: scores.politicalScore,
 					//frequency: scores.frequency, 
 					//authenticity: scores.authenticity 
-
+					confidence: scores.confidence,
 				}
 			});
 			// console.log(Object.keys(profileToFrequency).filter(function (profile) { return !profileToPages.hasOwnProperty(profile); }).join(","));

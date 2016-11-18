@@ -19,7 +19,7 @@ $(document).ready(function() {
           var data = {
               userId: id,
               score: 2 * Math.random() * Math.random() - 1,
-              confidence: 10 * Math.random() + 1,
+              confidence: Math.random(),
           };
           data.frequency = Math.random() < 0.3 ? Math.floor(Math.random() * 10 * (1.5 - Math.abs(data.score - 0.3))) : 0;
           return data;
