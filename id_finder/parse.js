@@ -14,66 +14,77 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 	tabId: -1,
 }, ["blocking", "requestHeaders"]);
 
-function getNewsFeedFrequency(done) {
+var lastRequestTime = 0;
+var requestInterval = 20;
+
+function get(url, done) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+	xhr.onreadystatechange = function (e) {
+		if (xhr.readyState == 4) {
+			done(xhr.responseText);
+		}
+	}
+	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * requestInterval;
+	lastRequestTime = delay + (+new Date());
+	setTimeout(function () {
+		xhr.send();
+	}, delay);
+}
+
+function getNewsFeedFrequency(maxDepth, done, onFetch) {
 	var frequency = {};
 
 	function fetch(url, depth, fetchDone) {
 		console.log('getNewsFeedFrequency.fetch', depth);
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', url, true);
-		xhr.onreadystatechange = function (e) {
-			if (xhr.readyState == 4) {
-				var text = xhr.responseText;
-				var $t = $(text);
-				
-				var links = $t.find('[role="article"] a').map(function () { return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1]; }).get();
-				links.forEach(function (link) {
-					if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
-					frequency[link]++;
-				});
+		get(url, function (text) {
+			var $t = $(text);
 
-				var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
-				if (next && depth) {
-					fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
-				} else {
-					fetchDone();
-				}
+			var links = $t.find('[role="article"] a').map(function () {
+				return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1];
+			}).get();
+			links.forEach(function (link) {
+				if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
+				frequency[link]++;
+			});
+
+			onFetch();
+
+			var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
+			if (next && depth) {
+				fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
+			} else {
+				fetchDone();
 			}
-		}
-		xhr.send();
+		});
 	}
 
-	fetch('https://m.facebook.com/stories.php', 10, function () {
+	fetch('https://m.facebook.com/stories.php', maxDepth, function () {
 		done(frequency);
 	});
 }
 
-function getPageLikes(pageId, done) {
+function getPageLikes(pageId, done, onFetch) {
 	console.log('getPageLikes', pageId);
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://m.facebook.com/profile.php?id=' + pageId, true);
-	xhr.onreadystatechange = function (e) {
-		if (xhr.readyState == 4) {
-			var text = xhr.responseText;
-			var $t = $(text);
-			var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+	get('https://m.facebook.com/profile.php?id=' + pageId, function (text) {
+		var $t = $(text);
+		var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+		onFetch();
 
-			var xhr2 = new XMLHttpRequest();
-			xhr2.open('GET', url2, true);
-			xhr2.onreadystatechange = function (e) {
-				if (xhr2.readyState == 4) {
-					var $t = $(xhr2.responseText);
-					var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function() { return $(this).attr('href') }).get();
-					done(profileUrls);
-				}
-			}
-			xhr2.send();
-		}
-	}
-	xhr.send();
+		get(url2, function (text2) {
+			var $t = $(text2);
+			var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
+				return $(this).attr('href')
+			}).get();
+			onFetch();
+			done(profileUrls);
+		});
+	});
 }
 
-function getAllFriendScores2(done) {
+function getAllFriendScores2(done, progress) {
+	var maxNewsFeedDepth = 30;
+
 	var pageIds = getAllPageIds();
 	var profileToPages = {};
 	var profileToFrequency;
@@ -84,14 +95,23 @@ function getAllFriendScores2(done) {
 				profileToPages[profile].push(pageId);
 			});
 			onReturn();
-		});
+		}, onProgress);
 	});
-	getNewsFeedFrequency(function (data) {
+	getNewsFeedFrequency(maxNewsFeedDepth, function (data, progress) {
 		profileToFrequency = data;
 		onReturn();
-	})
+	}, onProgress);
+
+	var totalProgress = maxNewsFeedDepth + 2 * pageIds.length;
+	var elapsedProgress = 0;
+
+	function onProgress() {
+		elapsedProgress++;
+		progress && progress(elapsedProgress, totalProgress);
+	}
 
 	var numReturnsRemaining = 1 + pageIds.length;
+
 	function onReturn() {
 		numReturnsRemaining--;
 		if (numReturnsRemaining == 0) {
@@ -131,7 +151,9 @@ function getLikes(userId, done) {
 			if (xhr.readyState == 4) {
 				var text = xhr.responseText;
 				var $t = $(text);
-				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {return $(this).text()}).get();
+				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {
+					return $(this).text()
+				}).get();
 				if (likes.length > 0) {
 					fetch(index + likes.length, function (moreLikes) {
 						fetchDone(likes.concat(moreLikes));
@@ -143,7 +165,7 @@ function getLikes(userId, done) {
 		}
 		xhr.send();
 	}
-	
+
 	fetch(0, done);
 }
 
@@ -165,9 +187,6 @@ function getFriends(done) {
 	}
 	xhr.send();
 }
-
-var lastRequestTime = 0;
-var requestInterval = 200;
 
 function parsePage(url, done) {
 	var xhr = new XMLHttpRequest();
@@ -230,11 +249,7 @@ function parsePage(url, done) {
 			// }
 		}
 	}
-	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * 300;
-	lastRequestTime = delay + (+new Date());
-	setTimeout(function () {
-		xhr.send();
-	}, delay);
+	xhr.send();
 }
 
 function buildQueryUrl(userId, newsSourceIds) {
@@ -297,7 +312,6 @@ function getAllFriendScores(done) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log("Incoming message", request, sender);
 	if (request.action == "parse") {
 		// parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
 		// getFriends();
@@ -314,7 +328,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 				action: "parseResponse",
 				data: data,
 			});
+		}, function (elapsed, total) {
+			console.log('Progress: ' + elapsed + '/' + total);
+			chrome.runtime.sendMessage({
+				action: "parseProgress",
+				data: {
+					elapsed: elapsed,
+					total: total,
+				},
+			});
 		});
-		sendResponse('a');
 	}
 });
