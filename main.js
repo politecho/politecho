@@ -13,6 +13,10 @@ var userData = userIds.map(function (id) {
     return data;
 });
 
+userData.forEach(function (d) {
+    d.r = 3;
+});
+
 var margin = {
         top: 20,
         right: 15,
@@ -64,12 +68,16 @@ var simulation = d3.forceSimulation(userData)
     .stop();
 
 $('html').click(function () {
+    userData.forEach(function (d) {
+        d.r = Math.sqrt(d.frequency) * 3 + 2;
+    });
+
     nodes
         .transition()
         .ease(d3.easeCubicOut)
         .duration(500)
         .attr('r', function (d) {
-            return d.frequency + 1;
+            return d.r;
         });
 
     lines
@@ -85,7 +93,7 @@ $('html').click(function () {
             return y(d.frequency);
         }))
         .force("collide", d3.forceCollide(function (d) {
-            return d.frequency + 2;
+            return d.r + 1;
         }).iterations(10))
         .alpha(1)
         .restart();
@@ -146,12 +154,23 @@ var lines = g.selectAll('line')
 var nodes = g.selectAll("scatter-dots")
     .data(userData)
     .enter().append("svg:circle")
-    .attr("r", 3)
+    .attr("r", function (d) {
+        return d.r;
+    })
     .attr("fill", function (d, i) {
         return colorRamp(d.score);
     });
 
+function updateBounds() {
+    userData.forEach(function (d) {
+         d.x = Math.max(d.r, Math.min(width - d.r, d.x));
+         d.y = Math.max(d.r, Math.min(height - d.r, d.y));
+    });
+}
+
 function ticked() {
+    updateBounds();
+
     nodes
         .attr("cx", function (d) {
             return d.x;
@@ -210,6 +229,9 @@ main.append("path")
     .attr("d", area);
 
 setTimeout(function () {
-    for (var i = 0; i < 300; ++i) simulation.tick();
+    for (var i = 0; i < 100; ++i) {
+        simulation.tick();
+        updateBounds();
+    }
     ticked();
 }, 1);
