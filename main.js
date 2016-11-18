@@ -1,32 +1,61 @@
-var data = [[5,3], [10,17], [15,4], [2,8]];
+var userIds = [];
+for (var i = 0; i < 300; i++) {
+    userIds.push(Math.floor(Math.random() * 1000000));
+}
 
-var margin = {top: 20, right: 15, bottom: 60, left: 60}
-  , width = 960 - margin.left - margin.right
-  , height = 500 - margin.top - margin.bottom;
+var userData = userIds.map(function (id) {
+    return {
+        userId: id,
+        score: 2 * Math.random() * Math.random() - 1,
+        confidence: 10 * Math.random() + 1,
+        frequency: Math.floor(Math.random() * 10),
+    };
+});
+
+var margin = {
+        top: 20,
+        right: 15,
+        bottom: 60,
+        left: 60
+    },
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
 var x = d3.scaleLinear()
-          .domain([0, d3.max(data, function(d) { return d[0]; })])
-          .range([ 0, width ]);
+    .domain([-1, 1])
+    .range([0, width]);
 
 var y = d3.scaleLinear()
-          .domain([0, d3.max(data, function(d) { return d[1]; })])
-          .range([ height, 0 ]);
+    .domain([0, d3.max(userData, function (d) {
+        return d.frequency;
+    })])
+    .range([0, height]);
+
+var simulation = d3.forceSimulation(userData)
+    .force("x", d3.forceX(function (d) {
+        return x(d.score);
+    }).strength(1))
+    .force("y", d3.forceY(0))
+    .force("collide", d3.forceCollide(4))
+    .stop();
+
+for (var i = 0; i < 3000; ++i) simulation.tick();
 
 var chart = d3.select('body')
-              .append('svg:svg')
-              .attr('width', width + margin.right + margin.left)
-              .attr('height', height + margin.top + margin.bottom)
-              .attr('class', 'chart')
+    .append('svg:svg')
+    .attr('width', width + margin.right + margin.left)
+    .attr('height', height + margin.top + margin.bottom)
+    .attr('class', 'chart')
 
 var main = chart.append('g')
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-                .attr('width', width)
-                .attr('height', height)
-                .attr('class', 'main')   
-    
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('class', 'main')
+
 // draw the x axis
 var xAxis = d3.axisBottom()
-              .scale(x);
+    .scale(x);
 
 main.append('g')
     .attr('transform', 'translate(0,' + height + ')')
@@ -35,18 +64,22 @@ main.append('g')
 
 // draw the y axis
 var yAxis = d3.axisLeft()
-              .scale(y);
+    .scale(y);
 
 main.append('g')
     .attr('transform', 'translate(0,0)')
     .attr('class', 'main axis date')
     .call(yAxis);
 
-var g = main.append("svg:g"); 
+var g = main.append("svg:g");
 
 g.selectAll("scatter-dots")
- .data(data)
- .enter().append("svg:circle")
-         .attr("cx", function (d,i) { return x(d[0]); } )
-         .attr("cy", function (d) { return y(d[1]); } )
-         .attr("r", 8);
+    .data(userData)
+    .enter().append("svg:circle")
+    .attr("cx", function (d, i) {
+        return d.x;
+    })
+    .attr("cy", function (d) {
+        return d.y;
+    })
+    .attr("r", 3);
