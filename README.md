@@ -2,7 +2,7 @@
 
 As students of a small liberal arts college in New Jersey, we were completely convinced that Hillary Clinton would be our next president. So when Donald Trump crossed the 270 Electoral College points threshold, we asked ourselves, how were we so wrong? Our Facebook news feeds promised a Clinton landslide that failed to materialize. Thus we realized that our small liberal arts college in New Jersey friends do not represent America. According to John Oliver of *Last Week Tonight with John Oliver*, we’re “just sounding off on the internet or sharing think pieces or videos like this one, that echo around your bubble.” So naturally we ask ourselves, do we actually live in a bubble on Facebook? And how strong is the echo? Thus emerged PolitEcho. 
 
-# What is PolitEcho? 
+## What is PolitEcho? 
 
 
 PolitEcho is a Chrome extension that visualizes the political bias of your Facebook news feed and friends. This app uses your friends' likes and shares of stories from prominent news sources to characterize their political biases. By examining which of these friends have the largest presence on your own news feed, we are also able to determine and display the relative bias of your news feed posts.
@@ -11,22 +11,22 @@ PolitEcho is a Chrome extension that visualizes the political bias of your Faceb
 Ultimately, we hope PolitEcho will make it easier for people to reflect on their own political biases and encourage people to make connections outside their immediate "bubble" of like-minded friends.
 
 
-# Technical Description
-## Data Collection
+## Technical Description
+### Data Collection
 The primary data used by the app was page likes on Facebook. We developed methods of figuring out what pages a specific Facebook user has liked through careful analysis of the web page’s source. Pages and users were tracked by their Graph ID. 
 
 
 In a similar fashion, we recovered information on the sources of posts on the user’s personal news feed. This information was then used to examine the relative bias of that user’s news feed.
 
 
-## Data Analysis
+### Data Analysis
 In general, we examined if users liked posts made by various news sources, like the New York Times or Fox News, on their Facebook pages. Each news source was manually assigned a corresponding position on the conservative-liberal scale of political ideology, and a user’s rating was determined as an average of the news sources they interacted most with. By repeating the process for every person in the user’s friends list, we built a picture of the relative political leanings of a person’s social neighborhood.
 
 
 The bias of the user’s friends was then compared with the bias of the user’s news feed. The top couple of posts were ranked based on the rankings of friends who liked or shared these posts. 
 
 
-## Front-end
+### Front-end
 The primary language used for the front-end was Javascript. The entire application was put together within the Google Chrome Extension system to take advantage of its cross-site request capability. JQuery was used for most of the processing work and d3.js was used to help construct the visualization.
 
 
