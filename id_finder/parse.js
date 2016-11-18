@@ -8,6 +8,7 @@ function parseDOM(document_root) {
 	return ids.toString();
 }
 function parsePage(url, done) {
+	console.log(url);
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
 	xhr.onreadystatechange = function(e) {
@@ -55,10 +56,22 @@ function parsePage(url, done) {
 	xhr.send();
 }
 
+function buildQueryUrl(userId, newsSourceIds) {
+	var url = 'https://www.facebook.com/search';
+	for (var i = 0; i < newsSourceIds.length; i++) {
+		url += '/' + newsSourceIds[i] + '/stories-by';
+		if (i > 0) {
+			url += '/union/intersect';
+		}
+	}
+	url += '/' + userId + '/stories-liked/intersect';
+	return url;
+}
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	console.log("Incoming message", request, sender);
 	if (request.action == "parse") {
-		parsePage('https://www.facebook.com/search/1662722772/stories-liked');
+		parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
 		sendResponse('a');
 	}
 });
