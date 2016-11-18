@@ -9,7 +9,31 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
 
 $(document).ready(function() {
   $('.pt-page-1').click(function () {
-    chrome.runtime.sendMessage({ action: 'parse' });
+    if (window.location.hash == '#test') {
+      var userIds = [];
+      for (var i = 0; i < 200; i++) {
+          userIds.push(Math.floor(Math.random() * 1000000));
+      }
+
+      var userData = userIds.map(function (id) {
+          var data = {
+              userId: id,
+              score: 2 * Math.random() * Math.random() - 1,
+              confidence: 10 * Math.random() + 1,
+          };
+          data.frequency = Math.random() < 0.3 ? Math.floor(Math.random() * 10 * (1.5 - Math.abs(data.score - 0.3))) : 0;
+          return data;
+      });
+      
+      loadChart(userData);
+
+      setTimeout(function () {
+        PageTransitions.nextPage();
+      }, 1000);
+    } else {
+      chrome.runtime.sendMessage({ action: 'parse' });
+    }
+
     PageTransitions.nextPage();
   });
 
