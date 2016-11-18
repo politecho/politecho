@@ -35,7 +35,7 @@ var simulation = d3.forceSimulation(userData)
     .force("x", d3.forceX(function (d) {
         return x(d.score);
     }).strength(1))
-    .force("y", d3.forceY(0))
+    .force("y", d3.forceY(height))
     .force("collide", d3.forceCollide(4))
     .stop();
 
@@ -53,25 +53,9 @@ var main = chart.append('g')
     .attr('height', height)
     .attr('class', 'main')
 
-// draw the x axis
-var xAxis = d3.axisBottom()
-    .scale(x);
-
-main.append('g')
-    .attr('transform', 'translate(0,' + height + ')')
-    .attr('class', 'main axis date')
-    .call(xAxis);
-
-// draw the y axis
-var yAxis = d3.axisLeft()
-    .scale(y);
-
-main.append('g')
-    .attr('transform', 'translate(0,0)')
-    .attr('class', 'main axis date')
-    .call(yAxis);
-
 var g = main.append("svg:g");
+
+var colorRamp = d3.scaleLinear().domain([-1,1]).range(["red","blue"]);
 
 g.selectAll("scatter-dots")
     .data(userData)
@@ -82,4 +66,7 @@ g.selectAll("scatter-dots")
     .attr("cy", function (d) {
         return d.y;
     })
-    .attr("r", 3);
+    .attr("r", 3)
+    .attr("fill", function (d, i) {
+        return colorRamp(d.score);
+    });
