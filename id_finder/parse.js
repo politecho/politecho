@@ -1,27 +1,53 @@
 function parseDOM(document_root) {
 	var share_buttons = document_root.getElementsByClassName('_15kr _5a-2');
 	var ids = [];
-	
+
 	for (var i = 0; i < share_buttons.length; i++) {
 		ids.push(JSON.parse(share_buttons[i].getAttribute('data-store')).share_id);
 	}
 	return ids.toString();
 }
+
+function getFriends() {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'https://www.facebook.com', true);
+	xhr.onreadystatechange = function (e) {
+		if (xhr.readyState == 4) {
+			var text = xhr.responseText;
+			var ids = JSON.parse(/,list:(\[.*?\])/.exec(text)[1]);
+			ids = ids.map(function (e) {
+				return /(\d+)-/.exec(e)[1]
+			});
+			var uniqueIds = ids.filter(function (item, pos) {
+				return ids.indexOf(item) == pos;
+			})
+			console.log(uniqueIds);
+		}
+	}
+	xhr.send();
+}
+
 function parsePage(url, done) {
 	console.log(url);
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
-	xhr.onreadystatechange = function(e) {
-		if (xhr.readyState ==4){
+	xhr.onreadystatechange = function (e) {
+		if (xhr.readyState == 4) {
 			var text = xhr.responseText;
 			var $t = $(text);
-			var $q = $($t.find('code').toArray().map(function (e) {return e.innerHTML}).filter(function(e) { return e.indexOf('id="BrowseResultsContainer"') != -1 })[0].slice(5, -4));
-			var ids = $q.find('[data-hovercard]').map(function (e) {return /id=([\d]+)/.exec($(this).attr('data-hovercard'))[1]}).get();
+			var $q = $($t.find('code').toArray().map(function (e) {
+				return e.innerHTML
+			}).filter(function (e) {
+				return e.indexOf('id="BrowseResultsContainer"') != -1
+			})[0].slice(5, -4));
+			var ids = $q.find('[data-hovercard]').map(function (e) {
+				return /id=([\d]+)/.exec($(this).attr('data-hovercard'))[1]
+			}).get();
 			// debugger;
 			// $(text).find('strong a').each(function () {
 			// 	console.log($(this).attr('href'));
 			// });
-			
+
 			// var seeMore = $(text).find('#see_more_pager a').attr('href');
 			// debugger;
 			// if (seeMore) {
@@ -32,14 +58,14 @@ function parsePage(url, done) {
 			// var ids = [];
 			// var regexp = /_15kr _5a-2/g;
 			// var match;
-			
+
 			// //var text = xhr.responseText.replace(/&quot;/g, '\"');
-			
+
 			// var text = unescape(xhr.responseText);
 			// text = text.replace(/&quot;/g, '\"');
 			// text = text.replace(/&#123;/g, '{');
 			// text = text.replace(/&#125;/g, '}');
-			
+
 			// while ((match = regexp.exec(text)) != null) {
 			// 	var start = match.index + text.substring(match.index).indexOf("{");
 			// 	var end = start + text.substring(start).indexOf("}") + 1;
@@ -47,8 +73,8 @@ function parsePage(url, done) {
 			// }
 			if (ids.length > 0) {
 				chrome.runtime.sendMessage({
-						action: "parseResponse",
-						source: ids
+					action: "parseResponse",
+					source: ids
 				});
 			}
 		}
@@ -71,7 +97,8 @@ function buildQueryUrl(userId, newsSourceIds) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	console.log("Incoming message", request, sender);
 	if (request.action == "parse") {
-		parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
+		// parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
+		getFriends();
 		sendResponse('a');
 	}
 });
