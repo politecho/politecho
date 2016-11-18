@@ -28,7 +28,7 @@ function getFriends(done) {
 }
 
 var lastRequestTime = 0;
-var requestInterval = 500;
+var requestInterval = 200;
 
 function parsePage(url, done) {
 	var xhr = new XMLHttpRequest();
@@ -91,7 +91,7 @@ function parsePage(url, done) {
 			// }
 		}
 	}
-	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0);
+	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * 300;
 	lastRequestTime = delay + (+new Date());
 	setTimeout(function () {
 		xhr.send();
