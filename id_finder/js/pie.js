@@ -43,11 +43,15 @@ function pies(userData) {
       .sort(null)
       .value(function(d) { return d.count; });
 
-      function makeSVG(data, label) {
-        var svg = d3.select(".pt-page-3").append("svg")
+      function makeSVG(data, label, index) {
+        var svgParent = d3.select(".pt-page-3").append("svg")
           .attr("class", label)
             .attr("width", width)
             .attr("height", height)
+            .style('opacity', 0)
+            .style('margin-left', '-10px');
+        
+        var svg = svgParent
           .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -63,9 +67,16 @@ function pies(userData) {
           svg.append("text").text(label)
             .attr("x", -100)
             .attr("y", 110);
+
+          svgParent
+            .transition()
+            .delay(300 * index)
+            .duration(800)
+            .style('opacity', 1)
+            .style('margin-left', '0px');
       }
 
-      makeSVG(dataNewsfeed, "newsfeed");
-      makeSVG(dataFriends, "friends");
+      makeSVG(dataNewsfeed, "newsfeed", 1);
+      makeSVG(dataFriends, "friends", 0);
   
 };

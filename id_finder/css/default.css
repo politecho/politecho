@@ -67,9 +67,9 @@ text {
 
 
 .node-line {
-  stroke: #333;
+  stroke: #222;
   stroke-width: 1.5px;
-  stroke-opacity: 0.3;
+  stroke-opacity: 0.1;
 }
 
 h1 {
