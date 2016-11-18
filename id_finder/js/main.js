@@ -19,6 +19,8 @@ function getStoredResponse(done) {
 }
 
 $(document).ready(function() {
+  chrome.runtime.sendMessage({ action: 'reset' });
+
   $('.pt-page-1 .button').click(function () {
     PageTransitions.nextPage();
     if (window.location.hash == '#test') {

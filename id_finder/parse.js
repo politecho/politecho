@@ -17,8 +17,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 var lastRequestTime = 0;
 var requestInterval = 50;
 
+var timeoutHistory = [];
+var xhrHistory = [];
+
 function get(url, done) {
 	var xhr = new XMLHttpRequest();
+	xhrHistory.push(xhr);
 	xhr.open('GET', url, true);
 	xhr.onreadystatechange = function (e) {
 		if (xhr.readyState == 4) {
@@ -27,9 +31,9 @@ function get(url, done) {
 	}
 	var delay = Math.max(lastRequestTime + requestInterval - (+new Date()), 0) + Math.random() * requestInterval;
 	lastRequestTime = delay + (+new Date());
-	setTimeout(function () {
+	timeoutHistory.push(setTimeout(function () {
 		xhr.send();
-	}, delay);
+	}, delay));
 }
 
 function getNewsFeedFrequency(maxDepth, done, onFetch) {
@@ -349,5 +353,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 				},
 			});
 		});
+	} else if (request.action == 'reset') {
+		timeoutHistory.forEach(function (timeout) {
+			clearTimeout(timeout)
+		});
+		timeoutHistory = [];
+		
+		xhrHistory.forEach(function (xhr) {
+			// http://stackoverflow.com/a/28257394/133211
+			xhr.onreadystatechange = null;
+			xhr.abort();
+		});
+		xhrHistory = [];
 	}
 });
