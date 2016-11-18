@@ -14,6 +14,63 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
 	tabId: -1,
 }, ["blocking", "requestHeaders"]);
 
+function getNewsFeedFrequency(done) {
+	var frequency = {};
+
+	function fetch(url, depth, fetchDone) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function (e) {
+			if (xhr.readyState == 4) {
+				var text = xhr.responseText;
+				var $t = $(text);
+				
+				var links = $t.find('[role="article"] a').map(function () { return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1]; }).get();
+				links.forEach(function (link) {
+					if (!frequency.hasOwnProperty(link)) frequency[link] = 0;
+					frequency[link]++;
+				});
+
+				var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
+				if (next && depth) {
+					fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
+				} else {
+					fetchDone();
+				}
+			}
+		}
+		xhr.send();
+	}
+
+	fetch('https://m.facebook.com/stories.php', 30, function () {
+		done(frequency);
+	});
+}
+
+function getPageLikes(pageId, done) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', 'https://m.facebook.com/profile.php?id=' + pageId, true);
+	xhr.onreadystatechange = function (e) {
+		if (xhr.readyState == 4) {
+			var text = xhr.responseText;
+			var $t = $(text);
+			var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+
+			var xhr2 = new XMLHttpRequest();
+			xhr2.open('GET', url2, true);
+			xhr2.onreadystatechange = function (e) {
+				if (xhr2.readyState == 4) {
+					var $t = $(xhr2.responseText);
+					var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function() { return $(this).attr('href') }).get();
+					done(profileUrls);
+				}
+			}
+			xhr2.send();
+		}
+	}
+	xhr.send();
+}
+
 function parseDOM(document_root) {
 	var share_buttons = document_root.getElementsByClassName('_15kr _5a-2');
 	var ids = [];
@@ -207,8 +264,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	if (request.action == "parse") {
 		// parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
 		// getFriends();
-		getAllFriendScores(function (results) {
-			console.log(results);
+		// getAllFriendScores(function (results) {
+		// 	console.log(results);
+		// });
+		// getPageLikes('6013004059');
+		getNewsFeedFrequency(function (frequency) {
+			console.log(frequency);
 		});
 		sendResponse('a');
 	}
