@@ -1,3 +1,19 @@
+chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
+	if (details.tabId != -1) return;
+	for (var i = 0; i < details.requestHeaders.length; ++i) {
+		if (details.requestHeaders[i].name === "User-Agent") {
+			details.requestHeaders[i].value = "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0";
+			break;
+		}
+	}
+	return {
+		requestHeaders: details.requestHeaders
+	};
+}, {
+	urls: ["<all_urls>"],
+	tabId: -1,
+}, ["blocking", "requestHeaders"]);
+
 function parseDOM(document_root) {
 	var share_buttons = document_root.getElementsByClassName('_15kr _5a-2');
 	var ids = [];
@@ -6,6 +22,35 @@ function parseDOM(document_root) {
 		ids.push(JSON.parse(share_buttons[i].getAttribute('data-store')).share_id);
 	}
 	return ids.toString();
+}
+
+function getLikes(userId, done) {
+	function getUrl(index) {
+		return 'https://m.facebook.com/profile.php?id=' + userId + '&v=likes&sectionid=9999&startindex=' + index;
+	}
+
+	function fetch(index, fetchDone) {
+		var url = getUrl(index);
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function (e) {
+			if (xhr.readyState == 4) {
+				var text = xhr.responseText;
+				var $t = $(text);
+				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {return $(this).text()}).get();
+				if (likes.length > 0) {
+					fetch(index + likes.length, function (moreLikes) {
+						fetchDone(likes.concat(moreLikes));
+					});
+				} else {
+					fetchDone([]);
+				}
+			}
+		}
+		xhr.send();
+	}
+	
+	fetch(0, done);
 }
 
 function getFriends(done) {
@@ -140,13 +185,14 @@ function getAllFriendScores(done) {
 	getFriends(function (userIds) {
 		// TODO: remove limit
 		userIds = userIds.splice(0, 10);
+		// userIds = ['1612626623'];
 
 		var results = [];
 		userIds.forEach(function (userId) {
-			getUserScore(userId, function (score) {
+			getLikes(userId, function (likes) {
 				results.push({
 					userId: userId,
-					score: score,
+					likes: likes,
 				});
 				if (results.length == userIds.length) {
 					done(results);
