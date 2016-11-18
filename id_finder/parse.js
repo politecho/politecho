@@ -43,7 +43,7 @@ function getNewsFeedFrequency(done) {
 		xhr.send();
 	}
 
-	fetch('https://m.facebook.com/stories.php', 30, function () {
+	fetch('https://m.facebook.com/stories.php', 10, function () {
 		done(frequency);
 	});
 }
@@ -99,9 +99,10 @@ function getAllFriendScores2(done) {
 				return {
 					userId: profile,
 					frequency: profileToFrequency[profile] || 0,
-					score: score(profileToPages[profile]),
+					score: score(profileToPages[profile]).politicalScore,
 				}
 			});
+			// console.log(Object.keys(profileToFrequency).filter(function (profile) { return !profileToPages.hasOwnProperty(profile); }).join(","));
 			done(results);
 		}
 	}
@@ -309,6 +310,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 		// });
 		getAllFriendScores2(function (data) {
 			console.log(data);
+			chrome.runtime.sendMessage({
+				action: "parseResponse",
+				data: data,
+			});
 		});
 		sendResponse('a');
 	}

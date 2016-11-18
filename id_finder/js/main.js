@@ -1,8 +1,19 @@
+chrome.runtime.onMessage.addListener(function (request, sender) {
+	if (request.action == "parseResponse") {
+		loadChart(request.data);
+    PageTransitions.nextPage();
+	}
+});
+
 $(document).ready(function() {
-  $('html').click(function() {
+  $('.pt-page-1').click(function () {
+    chrome.runtime.sendMessage({ action: 'parse' });
     PageTransitions.nextPage();
   });
 
+  $('.pt-page-4').click(function () {
+    PageTransitions.nextPage();
+  });
 
   var w     = 200;
   var h     = 200;

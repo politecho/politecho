@@ -65,7 +65,7 @@ var ucf = 1;
 
 //Fake news classifyng sources 
 var fakenews_dict = {};
-/*
+
 //Fake news pages 
 fakenews_dict["146422995398181"] = ulf; //Addicting Info 
 fakenews_dict["177486166274"] = ulf; //Being Liberal 
@@ -117,7 +117,7 @@ var ucp = 1;
 
 //Fake news classifyng sources 
 var pol_dict = {};
-/*
+
 //Politician Pages 
 pol_dict["6815841748"] = ulp; //Barack Obama
 pol_dict["22092775577"] = ulp; //Michelle Obama
