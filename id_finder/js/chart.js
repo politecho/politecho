@@ -119,11 +119,11 @@ function loadChart(userData) {
         console.log("bruh")
     });
 
-    var chart = d3.select('.pt-page-3')
+    var chart = d3.select('.pt-page-3 .col-xs-8')
         .append('svg:svg')
-        .attr('width', width + margin.right + margin.left)
-        .attr('height', height + margin.top + margin.bottom)
         .attr('class', 'chart')
+        .attr('viewBox', margin.left +' '+margin.bottom+' '+(width - margin.right) + ' ' + (height - margin.top))
+        .attr('preserveAspectRatio', 'xMinYMid meet')
 
     var main = chart.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
@@ -166,9 +166,9 @@ function loadChart(userData) {
 
     var tooltip = d3.select("body")
         .append("div")
-        .attr("class", "tooltip")
+        .attr("class", "chart-tooltip")
         .style("position", "absolute")
-        .style("z-index", "10")
+        .style("z-index", "999")
         .style("visibility", "hidden");
 
     function updateBounds() {

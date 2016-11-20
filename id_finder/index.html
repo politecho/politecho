@@ -5,6 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 		<title>PolitEcho</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/default.css" />
 		<link rel="stylesheet" type="text/css" href="css/multilevelmenu.css" />
 		<link rel="stylesheet" type="text/css" href="css/component.css" />
@@ -15,48 +16,66 @@
 		<script src="js/modernizr.custom.js"></script>
 	</head>
 	<body>
-		<div id="pt-main" class="pt-perspective">
+		<div id="pt-main" class="pt-perspective container-fluid">
 			<div class="pt-page pt-page-1 gradient">
-				<h5 class="politecho">PolitEcho</h5>
-				<h1>Is your news feed a bubble?</h1>
-				<h5>Find out how polarizing the content on your news feed is when compared to your friends as a whole.</h5>
-				<br/>
-				<div class="button">
-				Get started
+				<div class="row">
+					<h5 class="politecho">PolitEcho</h5>
+					<h1>Is your news feed a bubble?</h1>
+					<h5>Find out how polarizing the content on your news feed is when compared to your friends as a whole.</h5>
+					<br/>
+					<div class="button">
+					Get started
+					</div>
 				</div>
-				<svg id="home-animation"></svg>
+					<svg id="home-animation" width="1200" height="200"
+  viewBox="200 0 1200 200" style="width: 100%; height: 200px"
+  preserveAspectRatio="xMidYMid meet"></svg>
 			</div>
 			<div class="pt-page pt-page-2">
-				<h5 class="politecho">PolitEcho</h5>
-				<div class="gradient"></div>
-				<svg id="load-spinner"></svg>
-				<div class="col-right">
-					<h1>Analyzing your Facebook data</h1>
-					<p>In the meanwhile, read about <a target="_blank" href="http://www.slate.com/articles/technology/cover_story/2016/01/how_facebook_s_news_feed_algorithm_works.html">the complicated problems</a> faced by the humans behind the algorithmic feed that curates content on Facebook.</p>
-					<p class="js-progress-text"></p>
-					<p class="js-progress-bar progress-bar"></p>
-					<p class="js-render-text"></p>
-					<p class="js-render-bar progress-bar"></p>
+				<div class="row">
+					<div class="gradient"></div>
+					<div class="col-sm-6">
+						<h5 class="politecho">PolitEcho</h5>
+						<svg id="load-spinner" width="200" height="200"
+  viewBox="0 0 200 200" style="width: 50%; height: 200px"
+  preserveAspectRatio="xMidYMid meet"></svg>
+					</div>
+					<div class="col-sm-6">
+						<h1>Analyzing your Facebook data</h1>
+						<p>In the meanwhile, read about <a target="_blank" href="http://www.slate.com/articles/technology/cover_story/2016/01/how_facebook_s_news_feed_algorithm_works.html">the complicated problems</a> faced by the humans behind the algorithmic feed that curates content on Facebook.</p>
+						<p class="js-progress-text"></p>
+						<p class="js-progress-bar progress-bar"></p>
+						<p class="js-render-text"></p>
+						<p class="js-render-bar progress-bar"></p>
+					</div>
 				</div>
 			</div>
 			<div class="pt-page pt-page-3">
-				<h5 class="politecho">PolitEcho</h5>
-				<div class="gradient"></div>
-				<h1>Political leanings of all your friends</h1>
-				<p>
-					Here's the political sentiment of your friend list based on our predictors.
-				</p>
-				<p>
-					<!-- <div class="button back">
-						Back
-					</div> -->
-					<div class="button next">
-						Next
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="border-wrap">
+						</div>
+							<h5 class="politecho">PolitEcho</h5>
+							<h1>Political leanings of all your friends</h1>
+							<p>
+								Here's the political sentiment of your friend list based on our predictors.
+							</p>
+							<p>
+								<!-- <div class="button back">
+									Back
+								</div> -->
+								<div class="button next">
+									Next
+								</div>
+							</p>
+							<p class="hifrom" style="display: none">
+								If you would like a resource to meet people with different political views from your own, try <a target="_blank" href='https://www.hifromtheotherside.com/'>Hi from the other side</a>.
+							</p>
 					</div>
-				</p>
-				<p class="hifrom" style="display: none">
-					If you would like a resource to meet people with different political views from your own, try <a target="_blank" href='https://www.hifromtheotherside.com/'>Hi from the other side</a>.
-				</p>
+					<div class="col-xs-4">
+						<!-- -->
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -65,6 +84,7 @@
 		</div>
 
 		<script src="js/jquery-3.1.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 		<script src="js/d3.min.js"></script>
 		<script src="js/pagetransitions.js"></script>
 		<script src="js/main.js"></script>

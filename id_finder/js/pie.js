@@ -44,12 +44,12 @@ function pies(userData) {
       .value(function(d) { return d.count; });
 
       function makeSVG(data, label, index) {
-        var svgParent = d3.select(".pt-page-3").append("svg")
-          .attr("class", label)
-            .attr("width", width)
-            .attr("height", height)
-            .style('opacity', 0)
-            .style('margin-left', '-10px');
+        var svgParent = d3.select(".pt-page-3 .col-xs-4").append("svg")
+          .attr("class", "pie " + label)
+          .attr('viewBox', '0 0 '+width + ' ' + height)
+          .attr('preserveAspectRatio', 'xMidYMid meet')
+            .style('opacity', 0.5)
+            .style('left', '10px');
         
         var svg = svgParent
           .append("g")
@@ -73,10 +73,10 @@ function pies(userData) {
             .delay(300 * index)
             .duration(800)
             .style('opacity', 1)
-            .style('margin-left', '0px');
+            .style('left', '0px');
       }
 
-      makeSVG(dataNewsfeed, "newsfeed", 1);
       makeSVG(dataFriends, "friends", 0);
+      makeSVG(dataNewsfeed, "newsfeed", 1);
   
 };

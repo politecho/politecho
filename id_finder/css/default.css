@@ -11,7 +11,7 @@ body {
 	overflow: hidden;
 }
 
-.pt-page {
+.row {
 	padding: 50px;
 }
 
@@ -20,9 +20,7 @@ body {
 }
 
 .pt-page-1 svg#home-animation {
-  position: absolute;
-  left: 0;
-  bottom: 100px;
+  margin-top: 200px;
 }
 
 .pt-page-2 .gradient {
@@ -33,44 +31,50 @@ body {
 	width: 100%;
 }
 
-.pt-page-3 .gradient {
-	position: absolute;
-	top: 0;
-	left: 995px;
-	height: 100%;
-	width: 6px;
+.pt-page-3 .col-xs-8 .border-wrap {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh - 100px);
+  z-index: -1;
+	border-right: 5px solid rgba(132, 0, 148, 0.1);
 }
 
-.pt-page-3 svg:first-of-type {
-	margin-left: -57px;
-}
 .pt-page-3 svg circle {
 	cursor: pointer;
 }
 
-.tooltip {
+.pt-page-3 .chart {
+  margin-top: 50px;
+}
+
+@media (max-height: 550px) {
+  .pt-page-3 .chart {
+    margin-top: 10px;
+    height: 50vh;
+  }
+  .pt-page-3 .pie {
+    height: 45vh;
+  }
+}
+
+.chart-tooltip {
 	background: white;
+  color: #333;
 	padding: 4px;
 }
 
-.pt-page-3 svg:not(:first-of-type) {
-	position: absolute;
-	left: 1050px;
-	transform: translate(0, -50%);
-	opacity: 0.7;
-}
-
-.pt-page-3 svg.friends {
-	top: 240px;
-}
-.pt-page-3 svg.newsfeed {
-	top: 515px;
+.pt-page-3 .pie {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  max-width: 180px;
+  max-height: 270px;
+  padding-left: 10px;
 }
 
 text {
 	text-transform: capitalize;
 }
-
 
 .node-line {
   stroke: #222;
@@ -108,24 +112,22 @@ h5, p, text {
 
 #load-spinner {
 	position: absolute;
-	left: 25%;
-	top: 50%;
+	left: 50%;
+  top: 200px;
+	top: 40vh;
 	transform: translate(-50%, -50%);
 }
 
-.col-left {
-	display: inline-block;
-	position: absolute;
-	left: 50px;
-	width: 45%;
-	max-width: 500px;
+@media (max-width: 767px) {
+  #load-spinner {
+    top: 500px;
+    top: 60vh;
+    transform: translate(-50%, -50%);
+  }
 }
-.col-right {
-	display: inline-block;
-	position: absolute;
-	left: 50%;
-	width: 45%;
-	max-width: 500px;
+
+.chart {
+  width: 100%;
 }
 
 .area2 {
@@ -171,6 +173,9 @@ a {
 
 a:active, a:visited, a:hover {
 	color: inherit;
+  outline: none;
+  border: none;
+  text-decoration: none;
 }
 
 a::after {
@@ -183,11 +188,9 @@ a::after {
   background: linear-gradient(120deg, rgba(0, 0, 255, 0.25), rgba(255, 0, 0, 0.25));
  }
 
- a:hover {
- 	top: -2px;
- }
  a:hover::after {
   height: 3px;
+  bottom: -1px;
  }
 
  .progress-bar {
