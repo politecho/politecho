@@ -33,10 +33,10 @@ body {
 
 .pt-page-3 .col-xs-8 .border-wrap {
   position: absolute;
-  width: 100%;
+  right: 0;
+  width: 5px;
   height: calc(100vh - 100px);
   z-index: -1;
-	border-right: 5px solid rgba(132, 0, 148, 0.1);
 }
 
 .pt-page-3 svg circle {
