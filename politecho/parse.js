@@ -1,19 +1,3 @@
-chrome.webRequest.onBeforeSendHeaders.addListener(function (details) {
-	if (details.tabId != -1) return;
-	for (var i = 0; i < details.requestHeaders.length; ++i) {
-		if (details.requestHeaders[i].name === "User-Agent") {
-			details.requestHeaders[i].value = "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0";
-			break;
-		}
-	}
-	return {
-		requestHeaders: details.requestHeaders
-	};
-}, {
-	urls: ["<all_urls>"],
-	tabId: -1,
-}, ["blocking", "requestHeaders"]);
-
 var lastRequestTime = 0;
 var requestInterval = 50;
 
@@ -56,23 +40,23 @@ function getNewsFeedFrequency(maxDepth, done, onFetch) {
 
 			var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
 			if (next && depth) {
-				fetch('https://m.facebook.com' + next, depth - 1, fetchDone);
+				fetch('https://mbasic.facebook.com' + next, depth - 1, fetchDone);
 			} else {
 				fetchDone();
 			}
 		});
 	}
 
-	fetch('https://m.facebook.com/stories.php', maxDepth, function () {
+	fetch('https://mbasic.facebook.com/stories.php', maxDepth, function () {
 		done(frequency);
 	});
 }
 
 function getPageLikes(pageId, done, onFetch) {
 	console.log('getPageLikes', pageId);
-	get('https://m.facebook.com/profile.php?id=' + pageId, function (text) {
+	get('https://mbasic.facebook.com/profile.php?id=' + pageId, function (text) {
 		var $t = $(text);
-		var url2 = 'https://m.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+		var url2 = 'https://mbasic.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
 		onFetch();
 
 		get(url2, function (text2) {
@@ -155,7 +139,7 @@ function parseDOM(document_root) {
 
 function getLikes(userId, done) {
 	function getUrl(index) {
-		return 'https://m.facebook.com/profile.php?id=' + userId + '&v=likes&sectionid=9999&startindex=' + index;
+		return 'https://mbasic.facebook.com/profile.php?id=' + userId + '&v=likes&sectionid=9999&startindex=' + index;
 	}
 
 	function fetch(index, fetchDone) {

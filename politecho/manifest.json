@@ -17,5 +17,5 @@
     ],
     "persistent": true
   },
-  "permissions": ["tabs", "https://*.facebook.com/*", "webRequest", "webRequestBlocking", "storage"]
+  "permissions": ["tabs", "https://*.facebook.com/*", "storage"]
 }
