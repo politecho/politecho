@@ -88,11 +88,6 @@ h1 {
 	margin: 0;
 }
 
-.button {
-	font-family: 'Playfair Display', serif;
-	letter-spacing: 0.025em;
-}
-
 h5 {
 	margin-top: 0.5em;
 }
@@ -139,6 +134,8 @@ h5, p, text {
   display: inline-block;
   padding: 6px;
   cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.025em;
 }
 .button:before, .button:after {
   content: "";
