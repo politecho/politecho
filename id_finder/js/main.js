@@ -1,11 +1,13 @@
-chrome.runtime.onMessage.addListener(function (request, sender) {
-	if (request.action == "parseResponse") {
-    storeResponse(request.data);
-		loadChart(request.data);
-	} else if (request.action == "parseProgress") {
-    $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
-    $('.js-progress-bar').width(request.data.elapsed / request.data.total * 100 + '%');
-  }
+chrome.tabs.getCurrent(function (tab) {
+  chrome.runtime.onMessage.addListener(function (request, sender) {
+    if (request.action == "parseResponse" && request.tab == tab.id) {
+      storeResponse(request.data);
+      loadChart(request.data);
+    } else if (request.action == "parseProgress") {
+      $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
+      $('.js-progress-bar').width(request.data.elapsed / request.data.total * 100 + '%');
+    }
+  });
 });
 
 function storeResponse(data) {
