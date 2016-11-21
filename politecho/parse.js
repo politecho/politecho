@@ -77,7 +77,7 @@ function getPageLikes(pageId, done, onFetch) {
 
 		get(url2, function (text2) {
 			var $t = $(text2);
-			var profileUrls = $t.find('h4:contains("Friends who like this Page")').siblings().find('a').map(function () {
+			var profileUrls = $t.find('h4:contains("Friends who like this ")').siblings().find('a').map(function () {
 				return {
 					href: $(this).attr('href'),
 					name: $(this).text(),
