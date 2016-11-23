@@ -43,6 +43,26 @@ function renderShareImage(done) {
   });
 }
 
+// based on https://github.com/eirikb/gifie/blob/gh-pages/app.js
+function uploadCanvas(canvas, done) {
+  $.ajax({
+    url: 'https://api.imgur.com/3/image',
+    type: 'POST',
+    headers: {
+      Authorization: 'Client-ID e22a049ccc88194',
+      Accept: 'application/json'
+    },
+    data: {
+      image: canvas.toDataURL(),
+      type: 'base64'
+    },
+    success: function (result) {
+      var id = result.data.id;
+      done(`https://i.imgur.com/${id}.png`)
+    },
+  });
+}
+
 $(document).ready(function() {
   chrome.runtime.sendMessage({ action: 'reset' });
 
@@ -94,8 +114,9 @@ $(document).ready(function() {
   $('.js-share-fb').click(function (e) {
     e.preventDefault();
     renderShareImage(function (canvas) {
-      var dataURL = canvas.toDataURL();
-      window.open().document.write('<img src="' + dataURL + '"/>');
+      uploadCanvas(canvas, function (url) {
+        window.open(url, '_blank');
+      });
     });
   });
 });
