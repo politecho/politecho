@@ -160,10 +160,13 @@ function loadChart(userData) {
         .on("mouseover", function(d) {
             $tooltip.html($("<p>").html(d.name + " likes:"));
             var $p = $("<p>");
+            console.log(d.pages)
             d.pages.forEach(function(p) {
                 $p.append($("<div>").css("color", tooltipColorRamp(p.score)).text(p.name));
             });
             $tooltip.append($p);
+            var confidence = d.confidence > 0.8 ? "High" : d.confidence < 0.3 ? "Low" : "Medium";
+            $tooltip.append($("<p>").text("Confidence: "+confidence));
             return tooltip.style("visibility", "visible");
         })
         .on("mousemove", function(){return tooltip.style("top", Math.min(event.pageY-10, $(window).height() - $tooltip.height())+"px").style("left",(event.pageX+10)+"px");})

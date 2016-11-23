@@ -311,11 +311,16 @@ function score(post_ids) {
 	var fake = 0;
 	var num_posts = post_ids.length;
 	var pages = [];
+	//deduplicate post_ids
+	post_ids = post_ids.filter(function(elem, index, self) {
+    return index == self.indexOf(elem);
+	})
 	for (i = 0; i < num_posts; i++) {
 		post_id = post_ids[i];
 		var page_data = {
 			name: pageToName[post_id]
 		};
+		var oldFound = found;
 		if (news_dict[post_id]) {
 			found++;
 			score += news_dict[post_id];
@@ -331,11 +336,13 @@ function score(post_ids) {
 			score += pol_dict[post_id];
 			page_data["score"] = pol_dict[post_id];
 		}
-		pages.push(page_data);
+		if (found > oldFound) {
+			pages.push(page_data);
+		}
 	}
 	return {
 		politicalScore: score / found,
-		confidence: found / 7,
+		confidence: Math.min(found / 15, 1.0),
 		authenticity: 1 - fake / found,
 		pages: pages
 	};
