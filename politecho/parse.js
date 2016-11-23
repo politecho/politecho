@@ -135,6 +135,7 @@ function getAllFriendScores2(done, progress) {
 					//frequency: scores.frequency, 
 					//authenticity: scores.authenticity 
 					confidence: scores.confidence,
+					pages: scores.pages
 				}
 			});
 			// console.log(Object.keys(profileToFrequency).filter(function (profile) { return !profileToPages.hasOwnProperty(profile); }).join(","));

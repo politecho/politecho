@@ -157,11 +157,16 @@ function loadChart(userData) {
             chrome.tabs.create({url: "https://www.facebook.com" + d.userId});
             return false;
         })
-        .on("mouseover", function(d){
-            tooltip.text(d.name);
+        .on("mouseover", function(d) {
+            $tooltip.html($("<p>").html(d.name + " likes:"));
+            var $p = $("<p>");
+            d.pages.forEach(function(p) {
+                $p.append($("<div>").css("color", tooltipColorRamp(p.score)).text(p.name));
+            });
+            $tooltip.append($p);
             return tooltip.style("visibility", "visible");
         })
-        .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+        .on("mousemove", function(){return tooltip.style("top", Math.min(event.pageY-10, $(window).height() - $tooltip.height())+"px").style("left",(event.pageX+10)+"px");})
         .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
     var tooltip = d3.select("body")
@@ -170,6 +175,8 @@ function loadChart(userData) {
         .style("position", "absolute")
         .style("z-index", "999")
         .style("visibility", "hidden");
+    var $tooltip = $(tooltip.node());
+    var tooltipColorRamp = d3.scaleLinear().domain([-1, 1]).range(["blue", "red"]);
 
     function updateBounds() {
         userData.forEach(function (d) {
