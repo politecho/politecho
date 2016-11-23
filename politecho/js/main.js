@@ -63,6 +63,30 @@ function uploadCanvas(canvas, done) {
   });
 }
 
+// http://stackoverflow.com/a/32261263/133211
+function popupwindow(url, title, w, h) {
+  var y = window.top.outerHeight / 2 + window.top.screenY - (h / 2)
+  var x = window.top.outerWidth / 2 + window.top.screenX - (w / 2)
+  return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+}
+
+function showShareDialog(url) {
+  var popupURL = 'https://www.facebook.com/v2.8/dialog/feed?app_id=1825343064416855&display=popup&e2e=%7B%7D&locale=en_US';
+  // https://developers.facebook.com/docs/sharing/reference/feed-dialog
+  var params = {
+    name: 'My political bubble',
+    link: 'http://politecho.org',
+    description: 'View your political bubble with PolitEcho',
+    picture: url,
+  };
+  for (var param in params) {
+    if (params.hasOwnProperty(param)) {
+      popupURL += `&${param}=${encodeURIComponent(params[param])}`;
+    }
+  }
+  popupwindow(popupURL, 'Share on Facebook', 555, 665);
+}
+
 $(document).ready(function() {
   chrome.runtime.sendMessage({ action: 'reset' });
 
@@ -115,7 +139,7 @@ $(document).ready(function() {
     e.preventDefault();
     renderShareImage(function (canvas) {
       uploadCanvas(canvas, function (url) {
-        window.open(url, '_blank');
+        showShareDialog(url);
       });
     });
   });
