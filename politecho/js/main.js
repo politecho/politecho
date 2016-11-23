@@ -20,6 +20,29 @@ function getStoredResponse(done) {
   });
 }
 
+function renderShareImage(done) {
+  $.get('css/default.css', function (css) {
+    var elem = document.querySelector('g.main');
+    var elemHeight = parseInt(elem.attributes.height.value, 10);
+
+    var svgInner = '';
+    svgInner += '<text x="30" y="80" style="font-family: \'Playfair Display\'; font-size: 40px">My political bubble</text>';
+    svgInner += '<text x="30" y="115" style="font-family: \'Playfair Display\'; font-size: 18px">Made with PolitEcho.org</text>';
+    svgInner += `<g transform="translate(0, ${630 - elemHeight})">${elem.innerHTML}</g>`;
+    svgInner += `<g transform="translate(810, 0), scale(0.8)">${document.querySelector('svg.friends').innerHTML}</g>`;
+    svgInner += `<g transform="translate(1000, 0), scale(0.8)">${document.querySelector('svg.newsfeed').innerHTML}</g>`;
+
+    var svg = '<svg><style>' + css + '</style>' + svgInner + '</svg>';
+
+    var canvasOutput = document.createElement('canvas');
+    canvasOutput.width = 1200;
+    canvasOutput.height = 630;
+    canvg(canvasOutput, svg);
+    
+    done(canvasOutput);
+  });
+}
+
 $(document).ready(function() {
   chrome.runtime.sendMessage({ action: 'reset' });
 
@@ -66,5 +89,13 @@ $(document).ready(function() {
 
   $('.pt-page-4').click(function () {
     PageTransitions.nextPage();
+  });
+
+  $('.js-share-fb').click(function (e) {
+    e.preventDefault();
+    renderShareImage(function (canvas) {
+      var dataURL = canvas.toDataURL();
+      window.open().document.write('<img src="' + dataURL + '"/>');
+    });
   });
 });
