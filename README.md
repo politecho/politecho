@@ -1,8 +1,8 @@
 # PolitEcho 
 
-![Political Leaning of Your Political Feed](landingpage/img/news_feed.png)
+![Political Leaning of Your Political Feed](img/news_feed.png)
 
-As students of a small liberal arts college in New Jersey, we were completely convinced that Hillary Clinton would be our next president. So when Donald Trump crossed the 270 Electoral College points threshold, we asked ourselves, how were we so wrong? Our Facebook news feeds promised a Clinton landslide that failed to materialize. Thus we realized that our small liberal arts college in New Jersey friends do not represent America. According to John Oliver of *Last Week Tonight with John Oliver*, we're Òjust sounding off on the internet or sharing think pieces or videos like this one, that echo around your bubble.Ó So naturally we ask ourselves, do we actually live in a bubble on Facebook? And how strong is the echo? Thus emerged PolitEcho. 
+As students of a small liberal arts college in New Jersey, we were completely convinced that Hillary Clinton would be our next president. So when Donald Trump crossed the 270 Electoral College points threshold, we asked ourselves, how were we so wrong? Our Facebook news feeds promised a Clinton landslide that failed to materialize. Thus we realized that our small liberal arts college in New Jersey friends do not represent America. According to John Oliver of *Last Week Tonight with John Oliver*, we're just sounding off on the internet or sharing think pieces or videos like this one, that echo around your bubble. So naturally we ask ourselves, do we actually live in a bubble on Facebook? And how strong is the echo? Thus emerged PolitEcho. 
 
 ## What is PolitEcho? 
 
@@ -26,11 +26,11 @@ The primary language used for the front-end was Javascript. The entire applicati
 
 In a standard use case, a user who has logged into their Facebook account simply clicks on the PolitEcho chrome extension icon in their browser. This opens a separate page where the app fetches the required data from Facebook and displays the visualization.
 
-![Political Leaning of All Your Friends](landingpage/img/friends.png)
+![Political Leaning of All Your Friends](img/friends.png)
 
 The visualization shows political leaning on the x axis, with more liberal users/posts colored blue and placed closer to the left side of the visualization. Conservative users/posts are colored read and placed on the right side of the visualization. Each of the user's friends is given a point, resulting in a clear depiction of the relative distribution of political opinion within one's immediate friend group. 
 
-![Political Leaning of Your News Feed with Pie Chart](landingpage/img/pie.png)
+![Political Leaning of Your News Feed with Pie Chart](img/pie.png)
 
 The second screen of the visualization draws the political position of news feed posts relative to the political biases of the user's friends. The posts are raised, with the y axis depicting the frequency that friends liked that post. On the third screen, pie charts summarize the difference in distribution of political bias between your friend group and news feed.
 
