@@ -53,7 +53,7 @@ function uploadCanvas(canvas, done) {
       Accept: 'application/json'
     },
     data: {
-      image: canvas.toDataURL(),
+      image: canvas.toDataURL('image/png').replace('data:image/png;base64,', ''),
       type: 'base64'
     },
     success: function (result) {
