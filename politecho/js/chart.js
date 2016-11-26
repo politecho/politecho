@@ -99,7 +99,7 @@ function loadChart(userData) {
             .delay(50)
             .css({position: 'relative'})
             .animate({opacity: 0, top: '-10px'}, 200, function () {
-                $(this).text("And here's the political sentiment of just your news feed.")
+                $(this).text("The larger bubbles are highlighted here to represent the people who show up most often in your news feed.")
             })
             .animate({top: '10px'}, 0)
             .animate({opacity: 1, top: 0}, 200);

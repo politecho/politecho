@@ -34,10 +34,10 @@ function renderShareImage(done) {
 
     var svgInner = '';
     svgInner += '<text x="30" y="80" style="font-family: \'Playfair Display\'; font-size: 40px">My political bubble</text>';
-    svgInner += '<text x="30" y="115" style="font-family: \'Karla\'; font-size: 18px">Made with PolitEcho.org</text>';
+    svgInner += '<text x="30" y="115" style="font-family: \'Karla\'; font-size: 18px">Made from my friends list using PolitEcho.org</text>';
     svgInner += `<g transform="translate(0, ${630 - elemHeight})">${elem.innerHTML}</g>`;
-    svgInner += `<g transform="translate(810, 0), scale(0.8)">${document.querySelector('svg.friends').innerHTML}</g>`;
-    svgInner += `<g transform="translate(1000, 0), scale(0.8)">${document.querySelector('svg.newsfeed').innerHTML}</g>`;
+    svgInner += `<g transform="translate(960, 0)">${document.querySelector('svg.friends').innerHTML}</g>`;
+    svgInner += `<g transform="translate(960, 300)">${document.querySelector('svg.newsfeed').innerHTML}</g>`;
 
     var svg = '<svg><style>' + css + '</style>' + svgInner + '</svg>';
 
@@ -83,7 +83,7 @@ function showShareDialog(url) {
   var params = {
     name: 'My political bubble',
     link: 'http://politecho.org',
-    description: 'View your political bubble with PolitEcho',
+    description: 'View your news feed\'s political bias with PolitEcho',
     picture: url,
   };
   for (var param in params) {
