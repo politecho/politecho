@@ -342,7 +342,7 @@ function score(post_ids) {
 	}
 	return {
 		politicalScore: score / found,
-		confidence: Math.min(found / 15, 1.0),
+		confidence: Math.min(found / 10, 1.0),
 		authenticity: 1 - fake / found,
 		pages: pages
 	};

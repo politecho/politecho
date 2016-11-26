@@ -11,12 +11,19 @@ chrome.tabs.getCurrent(function (tab) {
 });
 
 function storeResponse(data) {
-  chrome.storage.local.set({"data": JSON.stringify(data)});
+  chrome.storage.local.set({
+    "data": JSON.stringify(data),
+    "time": (+new Date).toString()
+  });
 }
 
 function getStoredResponse(done) {
-  chrome.storage.local.get("data", function(items) {
-    return done(JSON.parse(items["data"]));
+  chrome.storage.local.get(["data", "time"], function(items) {
+    if (!items["data"]) return done({});
+    return done({
+      data: JSON.parse(items["data"]),
+      time: new Date(parseInt(items["time"]))
+    });
   });
 }
 
@@ -27,7 +34,7 @@ function renderShareImage(done) {
 
     var svgInner = '';
     svgInner += '<text x="30" y="80" style="font-family: \'Playfair Display\'; font-size: 40px">My political bubble</text>';
-    svgInner += '<text x="30" y="115" style="font-family: \'Playfair Display\'; font-size: 18px">Made with PolitEcho.org</text>';
+    svgInner += '<text x="30" y="115" style="font-family: \'Karla\'; font-size: 18px">Made with PolitEcho.org</text>';
     svgInner += `<g transform="translate(0, ${630 - elemHeight})">${elem.innerHTML}</g>`;
     svgInner += `<g transform="translate(810, 0), scale(0.8)">${document.querySelector('svg.friends').innerHTML}</g>`;
     svgInner += `<g transform="translate(1000, 0), scale(0.8)">${document.querySelector('svg.newsfeed').innerHTML}</g>`;
@@ -113,21 +120,22 @@ $(document).ready(function() {
       }, 700);
     } else {
       // chrome.storage.local.clear();
-      if (window.location.hash == '#cache') {
-        getStoredResponse(function(userData) {
-          if (userData) {
+      getStoredResponse(function(userData) {
+        if (userData && userData["time"]) {
+          var elapsedMinutes = (new Date - userData["time"]) / 1000 / 60;
+          if (elapsedMinutes < 30 && userData["data"]) {
             setTimeout(function () {
-              loadChart(userData);
+              loadChart(userData["data"]);
             }, 700);
           }
           else {
             chrome.runtime.sendMessage({ action: 'parse' });
           }
-        });
-      }
-      else {
-        chrome.runtime.sendMessage({ action: 'parse' });
-      }
+        }
+        else {
+          chrome.runtime.sendMessage({ action: 'parse' });
+        }
+      });
     }
   });
 

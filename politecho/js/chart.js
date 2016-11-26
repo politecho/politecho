@@ -160,7 +160,6 @@ function loadChart(userData) {
         .on("mouseover", function(d) {
             $tooltip.html($("<p>").html(d.name + " likes:"));
             var $p = $("<p>");
-            console.log(d.pages)
             d.pages.forEach(function(p) {
                 $p.append($("<div>").css("color", tooltipColorRamp(p.score)).text(p.name));
             });
