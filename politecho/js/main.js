@@ -142,8 +142,31 @@ $(document).ready(function() {
     PageTransitions.nextPage();
   });
 
+  var currentlySharing = false;
   $('.js-share-fb').click(function (e) {
     e.preventDefault();
-    renderShareImage().then(uploadCanvas).then(showShareDialog);
+
+    if (currentlySharing) return;
+    currentlySharing = true;
+
+    var $progress = $('.js-share-fb-progress');
+    $progress.addClass('js-share-fb-progress--animate');
+    $progress.text('Rendering');
+    renderShareImage().then(function (canvas) {
+      $progress.text('Saving');
+      return uploadCanvas(canvas);
+    }).then(function (url) {
+      $progress.text('Sharing');
+      setTimeout(function () {
+        $progress.removeClass('js-share-fb-progress--animate');
+        $progress.text('');
+        currentlySharing = false;
+      }, 1000);
+      return showShareDialog(url);
+    }).catch(function () {
+      $progress.removeClass('js-share-fb-progress--animate');
+      $progress.text('Something went wrong. Please try again.');
+      currentlySharing = false;
+    });
   });
 });
