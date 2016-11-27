@@ -27,8 +27,8 @@ function getStoredResponse(done) {
   });
 }
 
-function renderShareImage(done) {
-  $.get('css/default.css', function (css) {
+function renderShareImage() {
+  return $.get('css/default.css').then(function (css) {
     var elem = document.querySelector('g.main');
     var elemHeight = parseInt(elem.attributes.height.value, 10);
 
@@ -46,13 +46,13 @@ function renderShareImage(done) {
     canvasOutput.height = 630;
     canvg(canvasOutput, svg);
     
-    done(canvasOutput);
+    return Promise.resolve(canvasOutput);
   });
 }
 
 // based on https://github.com/eirikb/gifie/blob/gh-pages/app.js
-function uploadCanvas(canvas, done) {
-  $.ajax({
+function uploadCanvas(canvas) {
+  return $.ajax({
     url: 'https://api.imgur.com/3/image',
     type: 'POST',
     headers: {
@@ -63,10 +63,9 @@ function uploadCanvas(canvas, done) {
       image: canvas.toDataURL('image/png').replace('data:image/png;base64,', ''),
       type: 'base64'
     },
-    success: function (result) {
-      var id = result.data.id;
-      done(`https://i.imgur.com/${id}.png`)
-    },
+  }).then(function (result) {
+    var id = result.data.id;
+    return Promise.resolve(`https://i.imgur.com/${id}.png`);
   });
 }
 
@@ -145,10 +144,6 @@ $(document).ready(function() {
 
   $('.js-share-fb').click(function (e) {
     e.preventDefault();
-    renderShareImage(function (canvas) {
-      uploadCanvas(canvas, function (url) {
-        showShareDialog(url);
-      });
-    });
+    renderShareImage().then(uploadCanvas).then(showShareDialog);
   });
 });
