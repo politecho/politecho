@@ -43,9 +43,9 @@ function pies(userData) {
       .sort(null)
       .value(function(d) { return d.count; });
 
-      function makeSVG(data, label, index) {
+      function makeSVG(data, className, label, index) {
         var svgParent = d3.select(".pt-page-3 .col-xs-4").append("svg")
-          .attr("class", "pie " + label)
+          .attr("class", "pie " + className)
           .attr('viewBox', '0 0 '+width + ' ' + height)
           .attr('preserveAspectRatio', 'xMidYMid meet')
             .style('opacity', 0.5)
@@ -76,7 +76,7 @@ function pies(userData) {
             .style('left', '0px');
       }
 
-      makeSVG(dataFriends, "friends", 0);
-      makeSVG(dataNewsfeed, "newsfeed", 1);
+      makeSVG(dataFriends, 'friends', 'Friends', 0);
+      makeSVG(dataNewsfeed, 'newsfeed', 'News Feed', 1);
   
 };
