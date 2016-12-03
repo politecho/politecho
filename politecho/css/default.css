@@ -166,6 +166,7 @@ a {
   padding-bottom: 2px;
   text-decoration: none;
   top: 0;
+  white-space: nowrap;
 }
 
 a:active, a:visited, a:hover {
