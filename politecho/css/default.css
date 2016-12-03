@@ -162,34 +162,23 @@ h5, p, text {
 }
 
 a {
+  color: inherit;
   position: relative;
   padding-bottom: 2px;
-  text-decoration: none;
+  text-decoration: none !important;
   top: 0;
-  white-space: nowrap;
+  -webkit-border-image: 
+           -webkit-linear-gradient(left, rgba(0, 0, 255, 0.25) 1%,rgba(255, 0, 0, 0.25) 100%) 0 0 100% 0/0 0 1px 0 stretch;
 }
 
 a:active, a:visited, a:hover {
-	color: inherit;
+  color: inherit;
   outline: none;
   border: none;
   text-decoration: none;
+  -webkit-border-image: 
+           -webkit-linear-gradient(left, rgba(0, 0, 255, 0.25) 1%,rgba(255, 0, 0, 0.25) 100%) 0 0 100% 0/0 0 2px 0 stretch;
 }
-
-a::after {
-  content: "";
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  background: linear-gradient(120deg, rgba(0, 0, 255, 0.25), rgba(255, 0, 0, 0.25));
- }
-
- a:hover::after {
-  height: 3px;
-  bottom: -1px;
- }
 
  .progress-bar {
 	 background-color: black;
