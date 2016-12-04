@@ -136,6 +136,10 @@ h5, p, text {
   cursor: pointer;
   font-family: 'Playfair Display', serif;
   letter-spacing: 0.025em;
+  -webkit-border-image: none;
+}
+.button:hover {
+  -webkit-border-image: none; 
 }
 .button:before, .button:after {
   content: "";

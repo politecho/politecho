@@ -11,6 +11,7 @@ chrome.tabs.getCurrent(function (tab) {
 });
 
 function storeResponse(data) {
+  if (jQuery.isEmptyObject(data)) return;
   chrome.storage.local.set({
     "data": JSON.stringify(data),
     "time": (+new Date).toString()
