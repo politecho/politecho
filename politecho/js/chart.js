@@ -277,6 +277,14 @@ function loadChart(userData) {
                 $('.js-render-bar').width(e.data.progress * 100 + '%');
                 break;
             case 'end':
+                if (jQuery.isEmptyObject(userData)) {
+                    // handle scrape error (TODO better to detect this in parse.js)
+                    var $errorDiv = $("<p>");
+                    $errorDiv.text("There was an error accessing your news feed data. Please ensure that you are logged in to Facebook on Chrome and that your news feed language is set to English.");
+                    $('.pt-page-3 .col-xs-8 p').remove();
+                    $('.pt-page-3 .col-xs-8 .button').remove();
+                    $('.pt-page-3 .col-xs-8 svg').before($errorDiv);
+                }
                 for (var i = 0; i < userData.length; i++) {
                     Object.assign(userData[i], e.data.userData[i]);
                 }
