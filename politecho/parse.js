@@ -56,7 +56,8 @@ function getPageLikes(pageId, done, onFetch) {
 	console.log('getPageLikes', pageId);
 	get('https://mbasic.facebook.com/profile.php?id=' + pageId, function (text) {
 		var $t = $(text);
-		var url2 = 'https://mbasic.facebook.com' + $t.find('a[href$="socialcontext?refid=17"]').attr('href');
+		var url2 = 'https://mbasic.facebook.com' + $t.find('a[href$="about?refid=17"]').attr('href');
+		url2 = url2.replace(/about\?refid=17/, 'socialcontext');
 		onFetch();
 
 		get(url2, function (text2) {
