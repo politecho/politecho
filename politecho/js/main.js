@@ -1,8 +1,8 @@
 chrome.tabs.getCurrent(function (tab) {
   chrome.runtime.onMessage.addListener(function (request, sender) {
     if (request.action == "parseResponse" && request.tab == tab.id) {
-      storeResponse(request.data);
-      loadChart(request.data);
+      storeResponse(request.data, request.login);
+      loadChart(request.data, request.login);
     } else if (request.action == "parseProgress") {
       $('.js-progress-text').text('Progress: ' + Math.floor(request.data.elapsed / request.data.total * 100) + '%');
       $('.js-progress-bar').width(request.data.elapsed / request.data.total * 100 + '%');
@@ -10,20 +10,22 @@ chrome.tabs.getCurrent(function (tab) {
   });
 });
 
-function storeResponse(data) {
-  if (jQuery.isEmptyObject(data)) return;
+function storeResponse(data, login) {
+  if (jQuery.isEmptyObject(data) || !login) return;
   chrome.storage.local.set({
     "data": JSON.stringify(data),
+    "login": login,
     "time": (+new Date).toString()
   });
 }
 
 function getStoredResponse(done) {
-  chrome.storage.local.get(["data", "time"], function(items) {
-    if (!items["data"]) return done({});
+  chrome.storage.local.get(["data", "time", "login"], function(items) {
+    if (!(items["data"] && items["time"] && items["login"])) return done({});
     return done({
       data: JSON.parse(items["data"]),
-      time: new Date(parseInt(items["time"]))
+      time: items["time"],
+      login: items["login"]
     });
   });
 }
@@ -121,20 +123,10 @@ $(document).ready(function() {
     } else {
       // chrome.storage.local.clear();
       getStoredResponse(function(userData) {
-        if (userData && userData["time"]) {
-          var elapsedMinutes = (new Date - userData["time"]) / 1000 / 60;
-          if (elapsedMinutes < 30 && userData["data"]) {
-            setTimeout(function () {
-              loadChart(userData["data"]);
-            }, 700);
-          }
-          else {
-            chrome.runtime.sendMessage({ action: 'parse' });
-          }
-        }
-        else {
-          chrome.runtime.sendMessage({ action: 'parse' });
-        }
+        chrome.runtime.sendMessage({
+          action: 'parse',
+          cached: userData
+        });
       });
     }
   });

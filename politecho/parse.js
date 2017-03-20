@@ -151,24 +151,67 @@ function getAllPageIds() {
 		.concat(Object.keys(pol_dict));
 }
 
+function getLoggedInAs(done) {
+	get('https://mbasic.facebook.com', function(text) {
+		var $t = $(text);
+
+		// MARK
+		var pr = $t.find('a:contains("Profile")');
+		if (pr.length === 0) {
+			return done(null);
+		}
+		else {
+			var href = pr.attr('href');
+			return done(href.substring(0, href.indexOf('?')));
+		}
+	});
+}
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	if (request.action == "parse") {
-		getAllFriendScores2(function (data) {
-			console.log(data);
-			chrome.runtime.sendMessage({
-				action: "parseResponse",
-				data: data,
-				tab: sender.tab.id
-			});
-		}, function (elapsed, total) {
-			console.log('Progress: ' + elapsed + '/' + total);
-			chrome.runtime.sendMessage({
-				action: "parseProgress",
-				data: {
-					elapsed: elapsed,
-					total: total,
-				},
-			});
+		var userData = request.cached;
+		getLoggedInAs(function(login) {
+			if (!login) {
+				// not logged in
+				chrome.runtime.sendMessage({
+					action: "parseResponse",
+					data: [],
+					login: null,
+					tab: sender.tab.id
+				});
+			}
+			else if (userData && userData["login"] && userData["time"] &&
+					login == userData["login"] &&
+					(new Date - new Date(parseInt(userData["time"]))) / 1000 / 60 < 30) {
+				// cached data is valid
+				chrome.runtime.sendMessage({
+					action: "parseResponse",
+					data: userData["data"],
+					login: userData["login"],
+					tab: sender.tab.id
+				});
+			}
+			else {
+				// cached data is invalid
+				getAllFriendScores2(function (data) {
+					console.log(data);
+					chrome.runtime.sendMessage({
+						action: "parseResponse",
+						data: data,
+						login: login,
+						tab: sender.tab.id
+					});
+				}, function (elapsed, total) {
+					console.log('Progress: ' + elapsed + '/' + total);
+					chrome.runtime.sendMessage({
+						action: "parseProgress",
+						data: {
+							elapsed: elapsed,
+							total: total,
+						},
+					});
+				});
+			}
 		});
 	} else if (request.action == 'reset') {
 		timeoutHistory.forEach(function (timeout) {
