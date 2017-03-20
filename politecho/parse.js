@@ -28,6 +28,7 @@ function getNewsFeedFrequency(maxDepth, done, onFetch) {
 		get(url, function (text) {
 			var $t = $(text);
 
+			// MARK
 			var links = $t.find('[role="article"] a').map(function () {
 				return /(.*?)(?:\/\?|\?|$)/.exec($(this).attr('href'))[1];
 			}).get();
@@ -38,6 +39,7 @@ function getNewsFeedFrequency(maxDepth, done, onFetch) {
 
 			onFetch();
 
+			// MARK
 			var next = $t.find('a[href^="/stories.php?aftercursorr"]').last().attr('href');
 			if (next && depth) {
 				fetch('https://mbasic.facebook.com' + next, depth - 1, fetchDone);
@@ -56,12 +58,14 @@ function getPageLikes(pageId, done, onFetch) {
 	console.log('getPageLikes', pageId);
 	get('https://mbasic.facebook.com/profile.php?id=' + pageId, function (text) {
 		var $t = $(text);
+		// MARK
 		var url2 = 'https://mbasic.facebook.com' + $t.find('a[href$="about?refid=17"]').attr('href');
 		url2 = url2.replace(/about\?refid=17/, 'socialcontext');
 		onFetch();
 
 		get(url2, function (text2) {
 			var $t = $(text2);
+			// MARK
 			var profileUrls = $t.find('h4:contains("Friends who like this ")').siblings().find('a').map(function () {
 				return {
 					href: $(this).attr('href'),
@@ -129,130 +133,6 @@ function getAllFriendScores2(done, progress) {
 	}
 }
 
-function parseDOM(document_root) {
-	var share_buttons = document_root.getElementsByClassName('_15kr _5a-2');
-	var ids = [];
-
-	for (var i = 0; i < share_buttons.length; i++) {
-		ids.push(JSON.parse(share_buttons[i].getAttribute('data-store')).share_id);
-	}
-	return ids.toString();
-}
-
-function getLikes(userId, done) {
-	function getUrl(index) {
-		return 'https://mbasic.facebook.com/profile.php?id=' + userId + '&v=likes&sectionid=9999&startindex=' + index;
-	}
-
-	function fetch(index, fetchDone) {
-		var url = getUrl(index);
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', url, true);
-		xhr.onreadystatechange = function (e) {
-			if (xhr.readyState == 4) {
-				var text = xhr.responseText;
-				var $t = $(text);
-				var likes = $t.find('h4:contains("Other")').last().siblings().find('img').siblings().find('span').map(function (e) {
-					return $(this).text()
-				}).get();
-				if (likes.length > 0) {
-					fetch(index + likes.length, function (moreLikes) {
-						fetchDone(likes.concat(moreLikes));
-					});
-				} else {
-					fetchDone([]);
-				}
-			}
-		}
-		xhr.send();
-	}
-
-	fetch(0, done);
-}
-
-function getFriends(done) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://www.facebook.com', true);
-	xhr.onreadystatechange = function (e) {
-		if (xhr.readyState == 4) {
-			var text = xhr.responseText;
-			var ids = JSON.parse(/,list:(\[.*?\])/.exec(text)[1]);
-			ids = ids.map(function (e) {
-				return /(\d+)-/.exec(e)[1]
-			});
-			var uniqueIds = ids.filter(function (item, pos) {
-				return ids.indexOf(item) == pos;
-			})
-			done(uniqueIds);
-		}
-	}
-	xhr.send();
-}
-
-function parsePage(url, done) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', url, true);
-	xhr.onreadystatechange = function (e) {
-		if (xhr.readyState == 4) {
-			var text = xhr.responseText;
-			var $t = $(text);
-			var result = $t.find('code').toArray().map(function (e) {
-				return e.innerHTML
-			}).filter(function (e) {
-				return e.indexOf('id="BrowseResultsContainer"') != -1
-			})[0];
-
-			if (!result) {
-				console.log('empty result:', url);
-				done([]);
-			} else {
-				var $q = $(result.slice(5, -4));
-				var ids = $q.find('[data-hovercard]').map(function (e) {
-					return /id=([\d]+)/.exec($(this).attr('data-hovercard'))[1]
-				}).get();
-				console.log('results:', ids);
-				done(ids);
-			}
-
-			// debugger;
-			// $(text).find('strong a').each(function () {
-			// 	console.log($(this).attr('href'));
-			// });
-
-			// var seeMore = $(text).find('#see_more_pager a').attr('href');
-			// debugger;
-			// if (seeMore) {
-			// 	console.log(seeMore);
-			// 	parsePage(seeMore, done);
-			// }
-
-			// var ids = [];
-			// var regexp = /_15kr _5a-2/g;
-			// var match;
-
-			// //var text = xhr.responseText.replace(/&quot;/g, '\"');
-
-			// var text = unescape(xhr.responseText);
-			// text = text.replace(/&quot;/g, '\"');
-			// text = text.replace(/&#123;/g, '{');
-			// text = text.replace(/&#125;/g, '}');
-
-			// while ((match = regexp.exec(text)) != null) {
-			// 	var start = match.index + text.substring(match.index).indexOf("{");
-			// 	var end = start + text.substring(start).indexOf("}") + 1;
-			// 	ids.push(JSON.parse(text.slice(start,end)).share_id);
-			// }
-			// if (ids.length > 0) {
-			// 	chrome.runtime.sendMessage({
-			// 		action: "parseResponse",
-			// 		source: ids
-			// 	});
-			// }
-		}
-	}
-	xhr.send();
-}
-
 function buildQueryUrl(userId, newsSourceIds) {
 	var url = 'https://www.facebook.com/search';
 	for (var i = 0; i < newsSourceIds.length; i++) {
@@ -271,58 +151,8 @@ function getAllPageIds() {
 		.concat(Object.keys(pol_dict));
 }
 
-function getUserScore(userId, done) {
-	var pageIds = getAllPageIds();
-	var urls = [];
-	while (pageIds.length > 0) {
-		var url = buildQueryUrl(userId, pageIds.splice(0, 5));
-		urls.push(url);
-	}
-	var returnedCount = 0;
-	var foundPageIds = [];
-	urls.forEach(function (url) {
-		parsePage(url, function (thisIds) {
-			foundPageIds.push.apply(foundPageIds, thisIds);
-			returnedCount++;
-			if (returnedCount == urls.length) {
-				done(score(foundPageIds));
-			}
-		});
-	});
-}
-
-function getAllFriendScores(done) {
-	getFriends(function (userIds) {
-		// TODO: remove limit
-		userIds = userIds.splice(0, 10);
-		// userIds = ['1612626623'];
-
-		var results = [];
-		userIds.forEach(function (userId) {
-			getLikes(userId, function (likes) {
-				results.push({
-					userId: userId,
-					likes: likes,
-				});
-				if (results.length == userIds.length) {
-					done(results);
-				}
-			});
-		});
-	});
-}
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	if (request.action == "parse") {
-		// parsePage(buildQueryUrl(request.userId, request.newsSourceIds));
-		// getFriends();
-		// getAllFriendScores(function (results) {
-		// 	console.log(results);
-		// });
-		// getPageLikes('6013004059');
-		// getNewsFeedFrequency(function (frequency) {
-		// 	console.log(frequency);
-		// });
 		getAllFriendScores2(function (data) {
 			console.log(data);
 			chrome.runtime.sendMessage({
